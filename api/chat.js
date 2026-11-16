@@ -1,5 +1,3 @@
-import { GoogleGenAI } from '@google/genai';
-
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,24 +22,47 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Mensagem não fornecida' });
         }
 
-        const apiKey = process.env.GEMINI_API_KEY;
+        // Pega a chave da Vercel (pode ser a GEMINI_API_KEY onde você colou a chave da Groq)
+        const apiKey = process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY;
         if (!apiKey) {
-            return res.status(500).json({ error: 'API Key do Gemini não configurada na Vercel.' });
+            return res.status(500).json({ error: 'API Key não configurada na Vercel.' });
         }
 
-        const ai = new GoogleGenAI({ apiKey: apiKey });
-
-        const response = await ai.models.generateContent({
-            model: 'gemini-1.5-flash',
-            contents: message,
-            config: {
-                systemInstruction: "Você é o GOLIRA IA, um assistente de inteligência artificial focado em musculação, hipertrofia, constância, disciplina e finanças de atletas. Seu tom é motivador, direto, parceiro e levemente zueiro (estilo 'matilha'). Ajude o usuário com treinos, dicas de dieta e controle de gastos."
-            }
+        // Chamada via fetch para a API da Groq (Padrão OpenAI / Llama 3.3)
+        const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    {
+                        role: 'system',
+                        content: "Você é o GOLIRA IA, um assistente de inteligência artificial focado em musculação, hipertrofia, constância, disciplina e finanças de atletas. Seu tom é motivador, direto, parceiro e levemente zueiro (estilo 'matilha'). Ajude o usuário com treinos, dicas de dieta e controle de gastos."
+                    },
+                    {
+                        role: 'user',
+                        content: message
+                    }
+                ],
+                temperature: 0.7
+            })
         });
 
-        return res.status(200).json({ reply: response.text });
+        const data = await groqResponse.json();
+
+        if (data.error) {
+            console.error('Erro retornado pela Groq:', data.error);
+            return res.status(500).json({ error: data.error.message || 'Erro na API da Groq' });
+        }
+
+        const replyText = data.choices?.[0]?.message?.content || 'Sem resposta gerada.';
+
+        return res.status(200).json({ reply: replyText });
     } catch (error) {
-        console.error('Erro na API do Gemini:', error);
+        console.error('Erro interno no servidor:', error);
         return res.status(500).json({ error: 'Erro ao processar a resposta da IA.' });
     }
 }
