@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOLIRA - Constância & Performance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgBlack: '#000000',
+                        cardBlack: '#0A0A0A',
+                        cardBorder: '#1F1F1F',
+                        wineAccent: '#58111A',
+                        wineHover: '#6E1622',
+                        sandBeige: '#ECD3B5',
+                        textGray: '#E9E9E9',
+                        successGreen: '#22c55e',
+                        dangerRed: '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #000000; color: #E9E9E9; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-bgBlack text-textGray min-h-screen flex flex-col justify-between max-w-md mx-auto border-x border-cardBorder">
+
+    <!-- HEADER / TOPO -->
+    <header class="p-4 border-b border-cardBorder flex items-center justify-between bg-cardBlack/90 backdrop-blur sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-cardBorder border border-wineAccent/50 flex items-center justify-center">
+                <span class="font-bold text-sandBeige text-lg tracking-tighter">G<span class="text-wineAccent">🦍</span>L</span>
+            </div>
+            <div>
+                <h1 class="font-bold text-base tracking-widest text-sandBeige">GOLIRA</h1>
+                <p class="text-[10px] text-textGray/60 uppercase tracking-wider">Prod. Oficial</p>
+            </div>
+        </div>
+        <button onclick="abrirWhatsApp()" class="bg-wineAccent hover:bg-wineHover text-sandBeige px-3 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition">
+            <span>💬 WhatsApp</span>
+        </button>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 p-4 pb-24 overflow-y-auto">
+
+        <!-- ABA 1: HOJE (Dashboard) -->
+        <div id="tab-hoje" class="tab-content active space-y-4">
+            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4 shadow-lg">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider">Água</h2>
+                    <span id="texto-agua" class="text-xs font-bold text-sandBeige">1.750 / 3.000 ml</span>
+                </div>
+                <div class="w-full bg-cardBorder h-2.5 rounded-full overflow-hidden mb-3">
+                    <div id="barra-agua" class="bg-wineAccent h-full w-[58%] rounded-full transition-all duration-300"></div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="adicionarAgua(250)" class="flex-1 bg-cardBorder hover:bg-cardBorder/80 text-xs py-1.5 rounded-xl text-sandBeige font-medium">+250ml</button>
+                    <button onclick="adicionarAgua(500)" class="flex-1 bg-cardBorder hover:bg-cardBorder/80 text-xs py-1.5 rounded-xl text-sandBeige font-medium">+500ml</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
+                    <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-1">Peso & IMC</h2>
+                    <p class="text-2xl font-bold text-textGray">78.4 <span class="text-sm text-textGray/60 font-normal">kg</span></p>
+                    <p class="text-xs text-successGreen mt-1 font-medium">IMC: 24.2 (Saudável)</p>
+                </div>
+                <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
+                    <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-1">Gastos Hoje</h2>
+                    <p class="text-2xl font-bold text-textGray">R$ 35 <span class="text-sm text-textGray/60 font-normal">/ 50</span></p>
+                    <p class="text-xs text-sandBeige mt-1">Dentro da meta</p>
+                </div>
+            </div>
+
+            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
+                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-3">Hábitos de Hoje</h2>
+                <div class="space-y-2">
+                    <label class="flex items-center space-x-3 p-2.5 rounded-xl bg-cardBorder/40 border border-cardBorder/50 cursor-pointer">
+                        <input type="checkbox" checked class="accent-wineAccent w-4 h-4 rounded">
+                        <span class="text-sm line-through text-textGray/50">Treino A - Superiores</span>
+                    </label>
+                    <label class="flex items-center space-x-3 p-2.5 rounded-xl bg-cardBorder/40 border border-cardBorder/50 cursor-pointer">
+                        <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
+                        <span class="text-sm">Bater 3L de Água</span>
+                    </label>
+                    <label class="flex items-center space-x-3 p-2.5 rounded-xl bg-cardBorder/40 border border-cardBorder/50 cursor-pointer">
+                        <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
+                        <span class="text-sm">Estudar Fisioterapia (Oncologia)</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 2: BIBLIOTECA DE TREINOS -->
+        <div id="tab-treino" class="tab-content space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider">Fichas de Treino</h2>
+                <button class="bg-wineAccent text-sandBeige text-xs px-3 py-1.5 rounded-xl font-medium">+ Nova Ficha</button>
+            </div>
+
+            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4 space-y-3">
+                <div class="flex justify-between items-center border-b border-cardBorder pb-2">
+                    <div>
+                        <h3 class="font-bold text-sandBeige text-sm">Treino A - Superiores</h3>
+                        <p class="text-[10px] text-textGray/60">Peito, Ombro e Tríceps</p>
+                    </div>
+                    <button onclick="alert('Treino iniciado! Bom foco, GOLIRA 🦍')" class="bg-wineAccent/20 border border-wineAccent text-sandBeige text-xs px-3 py-1.5 rounded-xl font-medium">Iniciar</button>
+                </div>
+                <div class="space-y-2 text-xs">
+                    <label class="flex items-center justify-between p-2 rounded-lg bg-cardBorder/30 cursor-pointer">
+                        <div class="flex items-center space-x-2.5">
+                            <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
+                            <span>Supino Reto</span>
+                        </div>
+                        <span class="text-sandBeige font-mono font-medium">3x10 @ 50kg</span>
+                    </label>
+                    <label class="flex items-center justify-between p-2 rounded-lg bg-cardBorder/30 cursor-pointer">
+                        <div class="flex items-center space-x-2.5">
+                            <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
+                            <span>Supino Inclinado Halteres</span>
+                        </div>
+                        <span class="text-sandBeige font-mono font-medium">3x12 @ 20kg</span>
+                    </label>
+                    <label class="flex items-center justify-between p-2 rounded-lg bg-cardBorder/30 cursor-pointer">
+                        <div class="flex items-center space-x-2.5">
+                            <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
+                            <span>Crucifixo na Polia</span>
+                        </div>
+                        <span class="text-sandBeige font-mono font-medium">3x15 @ 15kg</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 3: HISTÓRICO & EVOLUÇÃO -->
+        <div id="tab-historico" class="tab-content space-y-4">
+            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
+                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-3">Constância de Outubro</h2>
+                <div class="grid grid-cols-7 gap-1.5 text-center text-[10px] mb-3">
+                    <span class="text-textGray/40">D</span><span class="text-textGray/40">S</span><span class="text-textGray/40">T</span><span class="text-textGray/40">Q</span><span class="text-textGray/40">Q</span><span class="text-textGray/40">S</span><span class="text-textGray/40">S</span>
+                    <div class="bg-cardBorder h-6 rounded flex items-center justify-center text-textGray/30">27</div>
+                    <div class="bg-cardBorder h-6 rounded flex items-center justify-center text-textGray/30">28</div>
+                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">1</div>
+                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">2</div>
+                    <div class="bg-dangerRed/30 border border-dangerRed text-dangerRed h-6 rounded flex items-center justify-center font-bold">3</div>
+                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">4</div>
+                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">5</div>
+                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">6</div>
+                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">7</div>
+                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">8</div>
+                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">9</div>
+                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">10</div>
+                </div>
+                <div class="flex justify-between items-center text-xs text-textGray/60 pt-2 border-t border-cardBorder">
+                    <span>Sequência atual: <strong class="text-sandBeige">5 dias</strong></span>
+                    <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-successGreen inline-block"></span> <span>Dias Vencidos</span></span>
+                </div>
+            </div>
+
+            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
+                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-2">Evolução do Peso</h2>
+                <div class="h-24 flex items-end justify-between pt-4 border-b border-cardBorder px-2">
+                    <div class="w-8 bg-wineAccent/40 rounded-t h-[60%] flex items-start justify-center text-[10px] pt-1 text-sandBeige">79.0</div>
+                    <div class="w-8 bg-wineAccent/60 rounded-t h-[55%] flex items-start justify-center text-[10px] pt-1 text-sandBeige">78.8</div>
+                    <div class="w-8 bg-wineAccent/80 rounded-t h-[50%] flex items-start justify-center text-[10px] pt-1 text-sandBeige">78.6</div>
+                    <div class="w-8 bg-wineAccent rounded-t h-[45%] flex items-start justify-center text-[10px] pt-1 text-sandBeige font-bold">78.4</div>
+                </div>
+                <div class="flex justify-between text-[10px] text-textGray/50 mt-2">
+                    <span>Sem 1</span><span>Sem 2</span><span>Sem 3</span><span>Sem 4 (Atual)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 4: RANKING & MURAL -->
+        <div id="tab-ranking" class="tab-content space-y-4">
+            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
+                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-3">Power Ranking (Top 10)</h2>
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between items-center p-2.5 rounded-xl bg-wineAccent/20 border border-wineAccent/40 font-medium">
+                        <span class="text-sandBeige">1. GOLIRA_Vini (Você)</span>
+                        <span class="font-mono text-sandBeige">11.060 pts</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2.5 rounded-xl bg-cardBorder/40">
+                        <span class="text-textGray/80">2. Bru</span>
+                        <span class="font-mono text-textGray/60">9.270 pts</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2.5 rounded-xl bg-cardBorder/40">
+                        <span class="text-textGray/80">3. Gui</span>
+                        <span class="font-mono text-textGray/60">8.480 pts</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider">Mural de Recados</h2>
+                    <span class="text-[10px] text-textGray/50">Recados 24h</span>
+                </div>
+                <div class="space-y-2 text-xs">
+                    <div class="p-2.5 rounded-xl bg-cardBorder/40 border border-cardBorder/50">
+                        <p class="font-semibold text-sandBeige text-[11px]">Bru</p>
+                        <p class="text-textGray/90 mt-0.5">Bora treinar às 18h hoje na Smart Fit? Quem vai?</p>
+                    </div>
+                </div>
+                <div class="flex space-x-2 pt-1">
+                    <input type="text" placeholder="Deixar recado..." class="flex-1 bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
+                    <button onclick="alert('Recado publicado! 🦍')" class="bg-wineAccent hover:bg-wineHover text-sandBeige px-3 py-2 rounded-xl text-xs font-medium">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 5: GOLIRA IA (Funcional via Backend) -->
+        <div id="tab-ia" class="tab-content space-y-4">
+            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4 flex flex-col h-[60vh] justify-between">
+                <div>
+                    <div class="flex items-center space-x-2 border-b border-cardBorder pb-3 mb-3">
+                        <div class="w-7 h-7 rounded-xl bg-wineAccent flex items-center justify-center text-sandBeige font-bold text-xs">IA</div>
+                        <div>
+                            <h3 class="text-xs font-bold text-sandBeige">GOLIRA IA</h3>
+                            <p class="text-[10px] text-successGreen">Online • Gemini Ativo</p>
+                        </div>
+                    </div>
+                    <div id="chat-messages" class="space-y-3 text-xs overflow-y-auto max-h-[42vh] pr-1">
+                        <div class="bg-cardBorder/50 p-3 rounded-2xl rounded-tl-sm text-textGray/90">
+                            E aí, Vini! Sou o GOLIRA IA. Como posso ajudar no seu treino ou dieta hoje? 🦍🔥
+                        </div>
+                    </div>
+                </div>
+                <div class="flex space-x-2 pt-2 border-t border-cardBorder">
+                    <input type="text" id="chat-input" placeholder="Pergunte ao GOLIRA IA..." class="flex-1 bg-cardBorder border border-cardBorder rounded-xl px-3 py-2.5 text-xs text-textGray focus:outline-none focus:border-wineAccent">
+                    <button onclick="enviarMensagemIA()" class="bg-wineAccent hover:bg-wineHover text-sandBeige px-4 py-2.5 rounded-xl text-xs font-medium">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+    <nav class="bg-cardBlack/95 backdrop-blur border-t border-cardBorder fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around py-2.5 px-2 z-50">
+        <button onclick="switchTab('hoje')" id="btn-hoje" class="nav-btn flex flex-col items-center space-y-1 text-sandBeige flex-1 transition">
+            <span class="text-lg">🏠</span>
+            <span class="text-[10px] font-medium">Hoje</span>
+        </button>
+        <button onclick="switchTab('treino')" id="btn-treino" class="nav-btn flex flex-col items-center space-y-1 text-textGray/60 flex-1 transition">
+            <span class="text-lg">🏋️</span>
+            <span class="text-[10px] font-medium">Treino</span>
+        </button>
+        <button onclick="switchTab('historico')" id="btn-historico" class="nav-btn flex flex-col items-center space-y-1 text-textGray/60 flex-1 transition">
+            <span class="text-lg">📊</span>
+            <span class="text-[10px] font-medium">Histórico</span>
+        </button>
+        <button onclick="switchTab('ranking')" id="btn-ranking" class="nav-btn flex flex-col items-center space-y-1 text-textGray/60 flex-1 transition">
+            <span class="text-lg">🦍</span>
+            <span class="text-[10px] font-medium">Ranking</span>
+        </button>
+        <button onclick="switchTab('ia')" id="btn-ia" class="nav-btn flex flex-col items-center space-y-1 text-textGray/60 flex-1 transition">
+            <span class="text-lg">✨</span>
+            <span class="text-[10px] font-medium">IA</span>
+        </button>
+    </nav>
+
+    <!-- SCRIPT DE CONTROLE & IA -->
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('text-sandBeige');
+                el.classList.add('text-textGray/60');
+            });
+            document.getElementById('tab-' + tabName).classList.add('active');
+            const activeBtn = document.getElementById('btn-' + tabName);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-textGray/60');
+                activeBtn.classList.add('text-sandBeige');
+            }
+        }
+
+        let aguaAtual = 1750;
+        function adicionarAgua(qtd) {
+            aguaAtual += qtd;
+            if(aguaAtual > 3000) aguaAtual = 3000;
+            let porcentagem = (aguaAtual / 3000) * 100;
+            document.getElementById('texto-agua').innerText = `${aguaAtual.toLocaleString()} / 3.000 ml`;
+            document.getElementById('barra-agua').style.width = porcentagem + '%';
+        }
+
+        function abrirWhatsApp() {
+            window.open('https://wa.me/?text=Bora%20treinar%20hoje,%20galera%20do%20GOLIRA?%20🦍', '_blank');
+        }
+
+        async function enviarMensagemIA() {
+            const input = document.getElementById('chat-input');
+            const mensagem = input.value.trim();
+            if(!mensagem) return;
+
+            const chatContainer = document.getElementById('chat-messages');
+            
+            // Adiciona mensagem do usuário
+            chatContainer.innerHTML += `
+                <div class="bg-wineAccent/30 border border-wineAccent/40 p-3 rounded-2xl rounded-tr-sm ml-auto max-w-[85%] text-textGray">
+                    ${mensagem}
+                </div>
+            `;
+            input.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Mensagem temporária de carregamento
+            const loadingId = 'loading-' + Date.now();
+            chatContainer.innerHTML += `
+                <div id="${loadingId}" class="bg-cardBorder/50 p-3 rounded-2xl rounded-tl-sm text-textGray/60">
+                    GOLIRA IA está pensando... 🦍
+                </div>
+            `;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: mensagem })
+                });
+                const data = await response.json();
+                
+                document.getElementById(loadingId).remove();
+
+                chatContainer.innerHTML += `
+                    <div class="bg-cardBorder/50 p-3 rounded-2xl rounded-tl-sm text-textGray/90">
+                        ${data.reply || data.error || 'Erro na resposta da IA.'}
+                    </div>
+                `;
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                chatContainer.innerHTML += `
+                    <div class="bg-dangerRed/20 border border-dangerRed p-3 rounded-2xl rounded-tl-sm text-dangerRed">
+                        Erro ao conectar com o backend da Vercel.
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
