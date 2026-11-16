@@ -262,7 +262,7 @@
             <span class="text-lg">🦍</span>
             <span class="text-[10px] font-medium">Ranking</span>
         </button>
-        <button onclick="switchTab('ia')" id="btn-ia" class="nav-btn flex flex-col items-center space-y-1 text-textGray/60 flex-1 transition">
+        <button onclick="switchTab/('ia')" id="btn-ia" class="nav-btn flex flex-col items-center space-y-1 text-textGray/60 flex-1 transition">
             <span class="text-lg">✨</span>
             <span class="text-[10px] font-medium">IA</span>
         </button>
@@ -304,7 +304,6 @@
 
             const chatContainer = document.getElementById('chat-messages');
             
-            // Adiciona mensagem do usuário
             chatContainer.innerHTML += `
                 <div class="bg-wineAccent/30 border border-wineAccent/40 p-3 rounded-2xl rounded-tr-sm ml-auto max-w-[85%] text-textGray">
                     ${mensagem}
@@ -313,7 +312,6 @@
             input.value = '';
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // Mensagem temporária de carregamento
             const loadingId = 'loading-' + Date.now();
             chatContainer.innerHTML += `
                 <div id="${loadingId}" class="bg-cardBorder/50 p-3 rounded-2xl rounded-tl-sm text-textGray/60">
