@@ -27,7 +27,7 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'API Key não configurada na Vercel.' });
         }
 
-        // Usando o modelo Llama 3.1 8B Instant (ativo, gratuito e estável na Groq)
+        // Usando o modelo atualizado openai/gpt-oss-20b na Groq
         const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: 'llama-3.1-8b-instant',
+                model: 'openai/gpt-oss-20b',
                 messages: [
                     {
                         role: 'system',
