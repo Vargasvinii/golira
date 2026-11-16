@@ -1,6 +1,18 @@
-import { GoogleGenAI } from '@google/genai';
-
 export default async function handler(req, res) {
+    // Configura CORS básico para aceitar chamadas do frontend
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    );
+
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Método não permitido' });
     }
@@ -11,19 +23,41 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Mensagem não fornecida' });
         }
 
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+            return res.status(500).json({ error: 'API Key do Gemini não configurada na Vercel.' });
+        }
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: message,
-            config: {
-                systemInstruction: "Você é o GOLIRA IA, um assistente de inteligência artificial focado em musculação, hipertrofia, constância, disciplina e finanças de atletas. Seu tom é motivador, direto, parceiro e levemente zueiro (estilo 'matilha'). Agradeça e ajude o usuário com treinos, dicas de dieta e controle de gastos."
-            }
+        // Chamada direta via fetch para a API REST do Gemini (sem dependências npm problemáticas)
+        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        parts: [
+                            { text: "Você é o GOLIRA IA, um assistente de inteligência artificial focado em musculação, hipertrofia, constância, disciplina e finanças de atletas. Seu tom é motivador, direto, parceiro e levemente zueiro (estilo 'matilha'). Ajude o usuário com treinos, dicas de dieta e controle de gastos." },
+                            { text: message }
+                        ]
+                    }
+                ]
+            })
         });
 
-        return res.status(200).json({ reply: response.text });
+        const data = await geminiResponse.json();
+
+        if (data.error) {
+            console.error('Erro retornado pela API do Gemini:', data.error);
+            return res.status(500).json({ error: data.error.message || 'Erro na API do Gemini' });
+        }
+
+        const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sem resposta gerada.';
+
+        return res.status(200).json({ reply: replyText });
     } catch (error) {
-        console.error('Erro na API do Gemini:', error);
+        console.error('Erro interno no servidor:', error);
         return res.status(500).json({ error: 'Erro ao processar a resposta da IA.' });
     }
 }
