@@ -22,13 +22,12 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Mensagem não fornecida' });
         }
 
-        // Pega a chave da Vercel (pode ser a GEMINI_API_KEY onde você colou a chave da Groq)
         const apiKey = process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY;
         if (!apiKey) {
             return res.status(500).json({ error: 'API Key não configurada na Vercel.' });
         }
 
-        // Chamada via fetch para a API da Groq (Padrão OpenAI / Llama 3.3)
+        // Usando o modelo Llama 3.1 8B Instant (ativo, gratuito e estável na Groq)
         const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -36,7 +35,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: 'llama-3.3-70b-versatile',
+                model: 'llama-3.1-8b-instant',
                 messages: [
                     {
                         role: 'system',
