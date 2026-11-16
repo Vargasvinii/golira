@@ -30,7 +30,7 @@ export default async function handler(req, res) {
         let data = null;
         let tentativas = 3;
 
-        // Tenta conectar até 3 vezes caso caia em pico de alta demanda
+        // Tenta conectar até 3 vezes automaticamente caso o servidor esteja congestionado
         while (tentativas > 0) {
             const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
                 method: 'POST',
@@ -50,19 +50,19 @@ export default async function handler(req, res) {
             data = await geminiResponse.json();
 
             if (!data.error) {
-                break; // Sucesso, sai do loop
+                break; // Sucesso na requisição, sai do loop
             }
 
             tentativas--;
             if (tentativas > 0) {
-                // Aguarda 1 segundo antes de tentar de novo
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // Aguarda 1.5 segundos antes de tentar novamente
+                await new Promise(resolve => setTimeout(resolve, 1500));
             }
         }
 
         if (data.error) {
             console.error('Erro retornado pela API do Gemini:', data.error);
-            return res.status(500).json({ error: 'Servidores do Gemini em alta demanda. Tente novamente em instantes.' });
+            return res.status(500).json({ error: 'Servidores do Gemini em alta demanda momentânea. Tente enviar a mensagem novamente em instantes.' });
         }
 
         const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sem resposta gerada.';
