@@ -22,12 +22,13 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Mensagem não fornecida' });
         }
 
-        const apiKey = process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY;
+        // Aceita tanto a GEMINI_API_KEY quanto GROQ_API_KEY configuradas na Vercel
+        const apiKey = process.env.GROQ_API_KEY || process.env.GEMINI_API_KEY;
         if (!apiKey) {
-            return res.status(500).json({ error: 'API Key não configurada na Vercel.' });
+            return res.status(500).json({ error: 'API Key não configurada nas variáveis de ambiente da Vercel.' });
         }
 
-        // Usando o modelo atualizado openai/gpt-oss-20b na Groq
+        // Requisição para a API da Groq usando o modelo ativo openai/gpt-oss-20b
         const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
