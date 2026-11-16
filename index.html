@@ -3,689 +3,569 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOLIRA - Constância & Performance</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Biblioteca de Confetes para comemoração de treinos -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        bgBlack: '#000000',
-                        cardBlack: '#0A0A0A',
-                        cardBorder: '#1F1F1F',
-                        wineAccent: '#58111A',
-                        wineHover: '#6E1622',
-                        sandBeige: '#ECD3B5',
-                        textGray: '#E9E9E9',
-                        successGreen: '#22c55e',
-                        dangerRed: '#ef4444'
-                    }
-                }
+    <title>GOLIRA - App Oficial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #000000;
+            color: #E9E9E9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Mockup do Celular */
+        .phone-frame {
+            width: 100%;
+            max-width: 390px;
+            background: #000000;
+            border: 3px solid #58111A;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(88, 17, 26, 0.4);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            height: 780px;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px 8px 24px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ECD3B5;
+            background: #000000;
+            z-index: 5;
+        }
+
+        .app-header {
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(236, 211, 181, 0.1);
+            background: rgba(88, 17, 26, 0.2);
+            z-index: 5;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            background: rgba(236, 211, 181, 0.1);
+            border: 1px solid rgba(236, 211, 181, 0.3);
+            border-radius: 20px;
+            color: #ECD3B5;
+            font-weight: 600;
+        }
+
+        /* Container do Conteúdo com a Marca d'Água do Gorila ao Fundo */
+        .app-content {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            padding-bottom: 90px;
+            position: relative;
+            background-color: #000000;
+        }
+
+        /* Marca d'água sutil do gorila no fundo */
+        .app-content::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500"><path fill="%2358111A" opacity="0.10" d="M250 80C170 80 110 130 90 200c-20 70-10 120 15 160 20 30 50 50 80 60 20 7 40 10 65 10s45-3 65-10c30-10 60-30 80-60 25-40 35-90 15-160-20-70-80-120-160-120zm0 40c60 0 110 40 125 100 12 50 3 90-15 120-15 25-35 40-60 48-18 6-35 8-50 8s-32-2-50-8c-25-8-45-23-60-48-18-30-27-70-15-120 15-60 65-100 125-100zm-75 95a25 25 0 1 0 0 50 25 25 0 0 0 0-50zm150 0a25 25 0 1 0 0 50 25 25 0 0 0 0-50zm-75 60c-25 0-45 15-55 35-5 10 2 20 12 20h86c10 0 17-10 12-20-10-20-30-35-55-35z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Gerenciamento das Abas */
+        .tab-pane {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-pane.active {
+            display: flex;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ECD3B5;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Cards Gerais (Treinos, Gastos, Mural) */
+        .card-box {
+            background: rgba(15, 15, 15, 0.9);
+            border: 1px solid rgba(236, 211, 181, 0.15);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-box.active-day {
+            background: linear-gradient(135deg, rgba(88, 17, 26, 0.35) 0%, rgba(5, 5, 5, 0.95) 100%);
+            border-color: rgba(236, 211, 181, 0.4);
+        }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ECD3B5;
+        }
+
+        .card-tag {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            background: rgba(236, 211, 181, 0.1);
+            border: 1px solid rgba(236, 211, 181, 0.3);
+            border-radius: 8px;
+            color: #ECD3B5;
+            text-transform: uppercase;
+        }
+
+        .card-body-text {
+            font-size: 12px;
+            color: rgba(233, 233, 233, 0.75);
+            line-height: 1.4;
+        }
+
+        .card-footer-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .btn-action {
+            background: #58111A;
+            border: 1px solid #ECD3B5;
+            color: #ECD3B5;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            background: #ECD3B5;
+            color: #000000;
+        }
+
+        /* Tab Bar Inferior */
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #000000;
+            border-top: 1px solid rgba(236, 211, 181, 0.15);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 10px 24px 10px;
+            z-index: 10;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: rgba(233, 233, 233, 0.4);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+        }
+
+        .tab-item.active {
+            color: #ECD3B5;
+        }
+
+        .tab-item span.icon {
+            font-size: 18px;
+        }
+
+        /* Modal de Feedback da IA */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: linear-gradient(145deg, #120305 0%, #000000 100%);
+            border: 2px solid #ECD3B5;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 330px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 15px 35px rgba(88, 17, 26, 0.6);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(236, 211, 181, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #ECD3B5;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: #ECD3B5;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            font-size: 12px;
+            color: #E9E9E9;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ai-badge-tag {
+            background: rgba(88, 17, 26, 0.6);
+            border: 1px solid rgba(236, 211, 181, 0.3);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #ECD3B5;
+            font-weight: 600;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 4px;
+        }
+
+        /* Animação de Confetes */
+        .confetti {
+            position: absolute;
+            top: -10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: rainDown 1.8s ease-in-out forwards;
+            z-index: 105;
+            pointer-events: none;
+        }
+
+        @keyframes rainDown {
+            0% {
+                transform: translate(var(--startX), 0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--endX), 780px) rotate(1080deg);
+                opacity: 0;
             }
         }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #000000; color: #E9E9E9; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #000000; }
-        ::-webkit-scrollbar-thumb { background: #1F1F1F; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-bgBlack text-textGray min-h-screen flex flex-col justify-between max-w-md mx-auto border-x border-cardBorder relative">
+<body>
 
-    <!-- ÁUDIO DE CAIXA REGISTRADORA -->
-    <audio id="som-dinheiro" src="https://www.myinstants.com/media/sounds/cash-register-kching_1.mp3" preload="auto"></audio>
-
-    <!-- TELA DE CADASTRO / PRIMEIRO ACESSO -->
-    <div id="modal-cadastro" class="fixed inset-0 bg-bgBlack z-50 flex flex-col justify-center p-6 overflow-y-auto">
-        <div class="max-w-sm mx-auto w-full space-y-6">
-            <div class="text-center space-y-2">
-                <div class="w-14 h-14 mx-auto rounded-full bg-wineAccent flex items-center justify-center border border-sandBeige/30 shadow-lg">
-                    <svg class="w-8 h-8 text-sandBeige" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                    </svg>
-                </div>
-                <h1 class="text-xl font-bold tracking-widest text-sandBeige">GOLIRA</h1>
-                <p class="text-xs text-textGray/60 uppercase tracking-wider">Constância & Performance</p>
-            </div>
-
-            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-5 space-y-4">
-                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider">Configurar seu Perfil</h2>
-                
-                <div>
-                    <label class="block text-[11px] text-textGray/70 mb-1">Apelido / Nickname</label>
-                    <input type="text" id="cad-nickname" placeholder="Ex: GOLIRA_Vini" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[11px] text-textGray/70 mb-1">Peso Atual (kg)</label>
-                        <input type="number" step="0.1" id="cad-peso" placeholder="78.4" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] text-textGray/70 mb-1">Altura (m)</label>
-                        <input type="number" step="0.01" id="cad-altura" placeholder="1.78" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[11px] text-textGray/70 mb-1">Meta de Água (ml)</label>
-                        <input type="number" id="cad-agua" value="3000" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] text-textGray/70 mb-1">Teto Gastos (R$)</label>
-                        <input type="number" id="cad-gasto" value="50" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-[11px] text-textGray/70 mb-1">Chave de Acesso / Grupo</label>
-                    <input type="password" id="cad-chave" placeholder="Chave do grupo ou Admin" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                </div>
-
-                <button onclick="salvarPerfilInicial()" class="w-full bg-wineAccent hover:bg-wineHover text-sandBeige py-2.5 rounded-xl text-xs font-semibold transition shadow-lg">
-                    CRIAR MEU PERFIL
-                </button>
-            </div>
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span>13:55</span>
+            <span>GOLIRA OS</span>
+            <span>100% 🦍</span>
         </div>
-    </div>
 
-    <!-- HEADER -->
-    <header class="p-4 border-b border-cardBorder flex items-center justify-between bg-cardBlack/90 backdrop-blur sticky top-0 z-40">
-        <div class="flex items-center space-x-2">
-            <div class="w-8 h-8 rounded-full bg-wineAccent flex items-center justify-center border border-sandBeige/30 shadow-md">
-                <svg class="w-4 h-4 text-sandBeige" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        <!-- Cabeçalho Oficial GOLIRA (Vetorizado sem erro de arquivo) -->
+        <div class="app-header">
+            <div class="brand">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 65" height="30" style="display: block;">
+                    <!-- Gorila Vinho -->
+                    <g transform="scale(0.12) translate(5, 5)">
+                        <path fill="#58111A" d="M250 80C170 80 110 130 90 200c-20 70-10 120 15 160 20 30 50 50 80 60 20 7 40 10 65 10s45-3 65-10c30-10 60-30 80-60 25-40 35-90 15-160-20-70-80-120-160-120zm0 40c60 0 110 40 125 100 12 50 3 90-15 120-15 25-35 40-60 48-18 6-35 8-50 8s-32-2-50-8c-25-8-45-23-60-48-18-30-27-70-15-120 15-60 65-100 125-100zm-75 95a25 25 0 1 0 0 50 25 25 0 0 0 0-50zm150 0a25 25 0 1 0 0 50 25 25 0 0 0 0-50zm-75 60c-25 0-45 15-55 35-5 10 2 20 12 20h86c10 0 17-10 12-20-10-20-30-35-55-35z"/>
+                    </g>
+                    <!-- Texto GOLIRA em Bege Oficial -->
+                    <text x="55" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="24" fill="#ECD3B5" letter-spacing="2.5">GOLIRA</text>
                 </svg>
             </div>
-            <div>
-                <h1 class="font-bold text-sm tracking-widest text-sandBeige">GOLIRA</h1>
-                <p id="header-user-tag" class="text-[9px] text-textGray/60 uppercase tracking-wider">Carregando...</p>
-            </div>
-        </div>
-        <button onclick="abrirConfiguracoes()" class="w-8 h-8 rounded-xl bg-cardBorder border border-cardBorder hover:border-wineAccent flex items-center justify-center text-sandBeige text-xs transition" title="Configurações">
-            ⚙️
-        </button>
-    </header>
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 p-4 pb-24 overflow-y-auto">
-
-        <!-- ABA 1: HOJE -->
-        <div id="tab-hoje" class="tab-content active space-y-4">
-            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4 shadow-lg">
-                <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider">Água</h2>
-                    <span id="texto-agua" class="text-xs font-bold text-sandBeige">0 / 3.000 ml</span>
-                </div>
-                <div class="w-full bg-cardBorder h-2.5 rounded-full overflow-hidden mb-3">
-                    <div id="barra-agua" class="bg-wineAccent h-full w-[0%] rounded-full transition-all duration-300"></div>
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="adicionarAgua(250)" class="flex-1 bg-cardBorder hover:bg-cardBorder/80 text-xs py-1.5 rounded-xl text-sandBeige font-medium transition">+250ml</button>
-                    <button onclick="adicionarAgua(500)" class="flex-1 bg-cardBorder hover:bg-cardBorder/80 text-xs py-1.5 rounded-xl text-sandBeige font-medium transition">+500ml</button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
-                    <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-1">Peso & IMC</h2>
-                    <p class="text-2xl font-bold text-textGray"><span id="display-peso">0.0</span> <span class="text-sm text-textGray/60 font-normal">kg</span></p>
-                    <p id="display-imc" class="text-xs text-successGreen mt-1 font-medium">IMC: --</p>
-                </div>
-                <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4 flex flex-col justify-between">
-                    <div>
-                        <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-1">Gastos (Besteiras)</h2>
-                        <p class="text-2xl font-bold text-textGray">R$ <span id="display-gasto-atual">0</span> <span id="display-teto-gasto" class="text-sm text-textGray/60 font-normal">/ 50</span></p>
-                    </div>
-                    <button onclick="registrarGastoPrompt()" class="mt-2 w-full bg-cardBorder hover:bg-cardBorder/80 text-[11px] text-sandBeige py-1 rounded-lg font-medium transition">
-                        + Registrar Gasto
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
-                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-3">Hábitos de Hoje</h2>
-                <div class="space-y-2">
-                    <label class="flex items-center space-x-3 p-2.5 rounded-xl bg-cardBorder/40 border border-cardBorder/50 cursor-pointer">
-                        <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
-                        <span class="text-sm">Treino A - Superiores</span>
-                    </label>
-                    <label class="flex items-center space-x-3 p-2.5 rounded-xl bg-cardBorder/40 border border-cardBorder/50 cursor-pointer">
-                        <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
-                        <span class="text-sm">Bater Meta de Água</span>
-                    </label>
-                    <label class="flex items-center space-x-3 p-2.5 rounded-xl bg-cardBorder/40 border border-cardBorder/50 cursor-pointer">
-                        <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
-                        <span class="text-sm">Estudar Fisioterapia / Casos Clínicos</span>
-                    </label>
-                </div>
-            </div>
+            <div class="user-badge">VINICIUS</div>
         </div>
 
-        <!-- ABA 2: TREINO (Com Cronômetro) -->
-        <div id="tab-treino" class="tab-content space-y-4">
-            <div class="flex justify-between items-center">
-                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider">Fichas de Treino</h2>
-                <button onclick="alert('Use a GOLIRA IA na aba IA para gerar e injetar novas fichas automaticamente! 🦍')" class="bg-wineAccent text-sandBeige text-xs px-3 py-1.5 rounded-xl font-medium">+ Nova Ficha</button>
-            </div>
+        <!-- CONTEÚDO DINÂMICO DAS ABAS -->
+        <div class="app-content" id="appContainer">
 
-            <div id="painel-cronometro" class="hidden bg-wineAccent/20 border border-wineAccent rounded-2xl p-4 flex items-center justify-between">
-                <div>
-                    <p class="text-[10px] text-sandBeige uppercase font-semibold">Treino em Andamento 🦍</p>
-                    <p id="tempo-cronometro" class="text-2xl font-mono font-bold text-sandBeige">00:00</p>
+            <!-- ABA 1: TREINOS -->
+            <div class="tab-pane active" id="tab-treinos">
+                <div class="section-header">
+                    <div class="section-title">Rotina de Treinos</div>
                 </div>
-                <button onclick="finalizarTreinoAtivo()" class="bg-wineAccent hover:bg-wineHover text-sandBeige px-4 py-2 rounded-xl text-xs font-bold transition shadow-lg">
-                    Finalizar Treino 🏆
-                </button>
-            </div>
-
-            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4 space-y-3">
-                <div class="flex justify-between items-center border-b border-cardBorder pb-2">
-                    <div>
-                        <h3 class="font-bold text-sandBeige text-sm">Treino A - Superiores</h3>
-                        <p class="text-[10px] text-textGray/60">Peito, Ombro e Tríceps</p>
+                <div class="card-box active-day">
+                    <div class="card-header-flex">
+                        <span class="card-title-text">Segunda-feira - Peito & Tríceps</span>
+                        <span class="card-tag">Hoje</span>
                     </div>
-                    <button onclick="iniciarTreino('Treino A - Superiores')" class="bg-wineAccent/20 border border-wineAccent text-sandBeige text-xs px-3 py-1.5 rounded-xl font-medium hover:bg-wineAccent hover:text-sandBeige transition">
-                        Iniciar Treino
-                    </button>
-                </div>
-                <div class="space-y-2 text-xs">
-                    <label class="flex items-center justify-between p-2 rounded-lg bg-cardBorder/30 cursor-pointer">
-                        <div class="flex items-center space-x-2.5">
-                            <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
-                            <span>Supino Reto</span>
-                        </div>
-                        <span class="text-sandBeige font-mono font-medium">3x10 @ 50kg</span>
-                    </label>
-                    <label class="flex items-center justify-between p-2 rounded-lg bg-cardBorder/30 cursor-pointer">
-                        <div class="flex items-center space-x-2.5">
-                            <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
-                            <span>Supino Inclinado Halteres</span>
-                        </div>
-                        <span class="text-sandBeige font-mono font-medium">3x12 @ 20kg</span>
-                    </label>
-                    <label class="flex items-center justify-between p-2 rounded-lg bg-cardBorder/30 cursor-pointer">
-                        <div class="flex items-center space-x-2.5">
-                            <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
-                            <span>Crucifixo na Polia</span>
-                        </div>
-                        <span class="text-sandBeige font-mono font-medium">3x15 @ 15kg</span>
-                    </label>
+                    <div class="card-body-text">
+                        • Supino Reto: 4x 8-10<br>
+                        • Supino Inclinado: 3x 10<br>
+                        • Tríceps Testa: 4x 12
+                    </div>
+                    <div class="card-footer-flex">
+                        <span style="font-size: 10px; color: rgba(236,211,181,0.6)">Sessão ativa</span>
+                        <button class="btn-action" onclick="finishWorkout()">Finalizar Treino 🦍</button>
+                    </div>
                 </div>
             </div>
 
-            <div id="container-fichas-ia" class="space-y-3"></div>
+            <!-- ABA 2: GASTOS -->
+            <div class="tab-pane" id="tab-gastos">
+                <div class="section-header">
+                    <div class="section-title">Controle Financeiro 💸</div>
+                    <button class="btn-action" onclick="alert('Adicionar novo gasto')">+ Gasto</button>
+                </div>
+                <div class="card-box">
+                    <div class="card-header-flex">
+                        <span class="card-title-text">Meta Diária</span>
+                        <span class="card-tag">No Alvo</span>
+                    </div>
+                    <div class="card-body-text">
+                        Gasto acumulado hoje: <strong>R$ 45,00</strong><br>
+                        Limite diário estabelecido: R$ 80,00
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA 3: MURAL -->
+            <div class="tab-pane" id="tab-mural">
+                <div class="section-header">
+                    <div class="section-title">Mural da Matilha 💬</div>
+                    <button class="btn-action" onclick="alert('Nova postagem')">+ Postar</button>
+                </div>
+                <div class="card-box">
+                    <div class="card-header-flex">
+                        <span class="card-title-text">Vinicius</span>
+                        <span style="font-size: 10px; color: rgba(233,233,233,0.4)">Hoje às 14:10</span>
+                    </div>
+                    <div class="card-body-text">
+                        Treino de peito pago com sucesso! Progressão de carga confirmada. Segue o plano da matilha! 🦍🔥
+                    </div>
+                </div>
+                <div class="card-box">
+                    <div class="card-header-flex">
+                        <span class="card-title-text">Brenda</span>
+                        <span style="font-size: 10px; color: rgba(233,233,233,0.4)">Ontem às 19:30</span>
+                    </div>
+                    <div class="card-body-text">
+                        Alguém viu quem deixou o som do golira tocar no talo? Kkkkkkk impecável!
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA 4: IA -->
+            <div class="tab-pane" id="tab-ia">
+                <div class="section-header">
+                    <div class="section-title">Assistente IA 🤖</div>
+                </div>
+                <div class="card-box">
+                    <div class="card-header-flex">
+                        <span class="card-title-text">Coach GOLIRA</span>
+                        <span class="card-tag">Online</span>
+                    </div>
+                    <div class="card-body-text">
+                        "Fala, Vinicius! Vi seu desempenho no supino hoje. Sua constância tá insana. Mantenha a hidratação alta e foco na recuperação muscular!"
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- ABA 3: HISTÓRICO -->
-        <div id="tab-historico" class="tab-content space-y-4">
-            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
-                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-3">Constância Atual</h2>
-                <div class="grid grid-cols-7 gap-1.5 text-center text-[10px] mb-3">
-                    <span class="text-textGray/40">D</span><span class="text-textGray/40">S</span><span class="text-textGray/40">T</span><span class="text-textGray/40">Q</span><span class="text-textGray/40">Q</span><span class="text-textGray/40">S</span><span class="text-textGray/40">S</span>
-                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">1</div>
-                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">2</div>
-                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">3</div>
-                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">4</div>
-                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">5</div>
-                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">6</div>
-                    <div class="bg-successGreen/30 border border-successGreen text-successGreen h-6 rounded flex items-center justify-center font-bold">7</div>
-                </div>
-                <div class="flex justify-between items-center text-xs text-textGray/60 pt-2 border-t border-cardBorder">
-                    <span>Sequência atual: <strong class="text-sandBeige">7 dias</strong></span>
-                    <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-successGreen inline-block"></span> <span>Dias Vencidos</span></span>
-                </div>
-            </div>
-
-            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
-                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-2">Evolução do Peso</h2>
-                <div class="h-24 flex items-end justify-between pt-4 border-b border-cardBorder px-2">
-                    <div class="w-8 bg-wineAccent/50 rounded-t h-[60%] flex items-start justify-center text-[10px] pt-1 text-sandBeige">79.0</div>
-                    <div class="w-8 bg-wineAccent/70 rounded-t h-[55%] flex items-start justify-center text-[10px] pt-1 text-sandBeige">78.8</div>
-                    <div class="w-8 bg-wineAccent/90 rounded-t h-[50%] flex items-start justify-center text-[10px] pt-1 text-sandBeige">78.6</div>
-                    <div id="chart-peso-atual" class="w-8 bg-wineAccent rounded-t h-[45%] flex items-start justify-center text-[10px] pt-1 text-sandBeige font-bold">78.4</div>
-                </div>
-                <div class="flex justify-between text-[10px] text-textGray/50 mt-2">
-                    <span>Sem 1</span><span>Sem 2</span><span>Sem 3</span><span>Atual</span>
-                </div>
-            </div>
+        <!-- TAB BAR INFERIOR -->
+        <div class="tab-bar">
+            <button class="tab-item active" onclick="switchTab('treinos', this)">
+                <span class="icon">💪</span>
+                <span>Treinos</span>
+            </button>
+            <button class="tab-item" onclick="switchTab('gastos', this)">
+                <span class="icon">💸</span>
+                <span>Gastos</span>
+            </button>
+            <button class="tab-item" onclick="switchTab('mural', this)">
+                <span class="icon">💬</span>
+                <span>Mural</span>
+            </button>
+            <button class="tab-item" onclick="switchTab('ia', this)">
+                <span class="icon">🤖</span>
+                <span>IA</span>
+            </button>
         </div>
 
-        <!-- ABA 4: RANKING & MURAL DO GOLIRÃO -->
-        <div id="tab-ranking" class="tab-content space-y-4">
-            <div class="bg-wineAccent/10 border border-wineAccent/40 rounded-2xl p-4 space-y-2">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xs font-bold text-sandBeige uppercase tracking-wider flex items-center space-x-1.5">
-                        <span>📢</span> <span>Mural do Golirão (Comunicado Oficial)</span>
-                    </h2>
-                    <button id="btn-editar-golirao" onclick="editarMuralGolirao()" class="hidden bg-wineAccent text-sandBeige text-[10px] px-2.5 py-1 rounded-lg font-medium">
-                        ✏️ Editar
-                    </button>
+        <!-- Modal de Resultado do Treino -->
+        <div class="modal-overlay" id="aiModal">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <span class="modal-title">GOLIRA | Treino Concluído</span>
+                    <button class="modal-close" onclick="closeModal()">✕</button>
                 </div>
-                <p id="texto-mural-golirao" class="text-xs text-textGray/90 italic">
-                    "Aviso do Admin: Foco total na constância da semana, matilha! Treino pesado hoje e água batida. 🦍"
-                </p>
-            </div>
-
-            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4">
-                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider mb-3">Power Ranking (Top 10)</h2>
-                <div class="space-y-2 text-xs">
-                    <div class="flex justify-between items-center p-2.5 rounded-xl bg-wineAccent/20 border border-wineAccent/40 font-medium">
-                        <span id="rank-user-name" class="text-sandBeige">1. GOLIRA_Vini (Você)</span>
-                        <span class="font-mono text-sandBeige">11.060 pts</span>
+                <div class="modal-body">
+                    <div class="ai-badge-tag">
+                        🦍 <strong>Matilha Atenta:</strong> Sincronização de carga registrada e som de vitória executado com sucesso!
                     </div>
-                    <div class="flex justify-between items-center p-2.5 rounded-xl bg-cardBorder/40">
-                        <span class="text-textGray/80">2. Bru</span>
-                        <span class="font-mono text-textGray/60">9.270 pts</span>
-                    </div>
-                    <div class="flex justify-between items-center p-2.5 rounded-xl bg-cardBorder/40">
-                        <span class="text-textGray/80">3. Gui</span>
-                        <span class="font-mono text-textGray/60">8.480 pts</span>
-                    </div>
+                    <p>Continue firme na rotina e mantenha a hidratação em dia. Segue o plano!</p>
                 </div>
-            </div>
-
-            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4 space-y-3">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider">Mural de Recados 24h</h2>
-                    <span class="text-[10px] text-textGray/50">Resenha da Matilha</span>
+                <div class="modal-footer">
+                    <button class="btn-action" onclick="closeModal()">Fechar</button>
                 </div>
-                <div id="lista-recados" class="space-y-2 text-xs">
-                    <div class="p-2.5 rounded-xl bg-cardBorder/40 border border-cardBorder/50">
-                        <p class="font-semibold text-sandBeige text-[11px]">Bru</p>
-                        <p class="text-textGray/90 mt-0.5">Bora treinar às 18h hoje na Smart Fit? Quem vai?</p>
-                    </div>
-                </div>
-                <div class="flex space-x-2 pt-1">
-                    <input type="text" id="input-recado" placeholder="Deixar recado..." class="flex-1 bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                    <button onclick="enviarRecado()" class="bg-wineAccent hover:bg-wineHover text-sandBeige px-3 py-2 rounded-xl text-xs font-medium transition">Enviar</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ABA 5: GOLIRA IA -->
-        <div id="tab-ia" class="tab-content space-y-4">
-            <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4 flex flex-col h-[60vh] justify-between">
-                <div>
-                    <div class="flex items-center space-x-2 border-b border-cardBorder pb-3 mb-3">
-                        <div class="w-7 h-7 rounded-xl bg-wineAccent flex items-center justify-center text-sandBeige font-bold text-xs">IA</div>
-                        <div>
-                            <h3 class="text-xs font-bold text-sandBeige">GOLIRA IA</h3>
-                            <p class="text-[10px] text-successGreen">Online • Gemini Ativo</p>
-                        </div>
-                    </div>
-                    <div id="chat-messages" class="space-y-3 text-xs overflow-y-auto max-h-[42vh] pr-1">
-                        <div class="bg-cardBorder/50 p-3 rounded-2xl rounded-tl-sm text-textGray/90">
-                            E aí! Sou o GOLIRA IA. Posso montar treinos, ajustar sua dieta ou registrar gastos. Se pedir um treino novo, posso injetá-lo direto na sua aba de treinos! 🦍🔥
-                        </div>
-                    </div>
-                </div>
-                <div class="flex space-x-2 pt-2 border-t border-cardBorder">
-                    <input type="text" id="chat-input" placeholder="Peça um treino ou tire dúvidas..." class="flex-1 bg-cardBorder border border-cardBorder rounded-xl px-3 py-2.5 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                    <button onclick="enviarMensagemIA()" class="bg-wineAccent hover:bg-wineHover text-sandBeige px-4 py-2.5 rounded-xl text-xs font-medium transition">Enviar</button>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- MODAL DE CONFIGURAÇÕES -->
-    <div id="modal-config" class="hidden fixed inset-0 bg-bgBlack/80 backdrop-blur z-50 flex items-center justify-center p-4">
-        <div class="bg-cardBlack border border-cardBorder rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-cardBorder pb-2">
-                <h2 class="text-xs font-semibold text-sandBeige uppercase tracking-wider">Configurações & Metas</h2>
-                <button onclick="fecharConfiguracoes()" class="text-textGray/60 hover:text-sandBeige text-sm">✕</button>
-            </div>
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="block text-[11px] text-textGray/70 mb-1">Apelido</label>
-                    <input type="text" id="cfg-nickname" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[11px] text-textGray/70 mb-1">Peso (kg)</label>
-                        <input type="number" step="0.1" id="cfg-peso" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] text-textGray/70 mb-1">Altura (m)</label>
-                        <input type="number" step="0.01" id="cfg-altura" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[11px] text-textGray/70 mb-1">Meta Água (ml)</label>
-                        <input type="number" id="cfg-agua" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] text-textGray/70 mb-1">Teto Gastos (R$)</label>
-                        <input type="number" id="cfg-gasto" class="w-full bg-cardBorder border border-cardBorder rounded-xl px-3 py-2 text-xs text-textGray focus:outline-none focus:border-wineAccent">
-                    </div>
-                </div>
-            </div>
-            <div class="flex space-x-2 pt-2">
-                <button onclick="salvarConfiguracoes()" class="flex-1 bg-wineAccent hover:bg-wineHover text-sandBeige py-2 rounded-xl text-xs font-semibold transition">Salvar</button>
-                <button onclick="fecharConfiguracoes()" class="flex-1 bg-cardBorder hover:bg-cardBorder/80 text-textGray py-2 rounded-xl text-xs font-medium transition">Cancelar</button>
             </div>
         </div>
     </div>
 
-    <!-- NAVEGAÇÃO INFERIOR -->
-    <nav class="bg-cardBlack/95 backdrop-blur border-t border-cardBorder fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around py-2.5 px-2 z-40">
-        <button onclick="switchTab('hoje')" id="btn-hoje" class="nav-btn flex flex-col items-center space-y-1 text-sandBeige flex-1 transition">
-            <span class="text-base">🏠</span>
-            <span class="text-[9px] font-medium">Hoje</span>
-        </button>
-        <button onclick="switchTab('treino')" id="btn-treino" class="nav-btn flex flex-col items-center space-y-1 text-textGray/50 flex-1 transition">
-            <span class="text-base">🏋️</span>
-            <span class="text-[9px] font-medium">Treino</span>
-        </button>
-        <button onclick="switchTab('historico')" id="btn-historico" class="nav-btn flex flex-col items-center space-y-1 text-textGray/50 flex-1 transition">
-            <span class="text-base">📊</span>
-            <span class="text-[9px] font-medium">Histórico</span>
-        </button>
-        <button onclick="switchTab('ranking')" id="btn-ranking" class="nav-btn flex flex-col items-center space-y-1 text-textGray/50 flex-1 transition">
-            <span class="text-base">🦍</span>
-            <span class="text-[9px] font-medium">Ranking</span>
-        </button>
-        <button onclick="switchTab('ia')" id="btn-ia" class="nav-btn flex flex-col items-center space-y-1 text-textGray/50 flex-1 transition">
-            <span class="text-base">✨</span>
-            <span class="text-[9px] font-medium">IA</span>
-        </button>
-    </nav>
+    <!-- Elemento de Áudio com o seu Base64 original funcionando -->
+    <audio id="monkeyAudio" preload="auto">
+        <source src="data:audio/mpeg;base64,//vQZAAP8AAAAAAAAAgAAA0gAAABACgCAASAACAAADSAAAAEAZMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU8Uyw9Q2w9g//70mQED/kzNgADvfDwAAANIAAAAQBIAgANAAAgAAA0gAAABBQ4OZw1yJQyZX841sU8p4891rU+ijo2CLQyfZU5Tu09d6E+z5U9FsM4XOUyvDA31gE6/6M+f5E9Vvc55dEzZNY0yi48E6gz+DaDRxO5M0Mqcx0QszDcICMxQ8A0UkwDScR0NIJAQzVCIDFXEIMno941CFYDRyJUMOkTU0zi3DAtZENEJCwz2gIjN4FLMfQxow3glAECSYDoIZhJhpmFOCAZghKBkXpxmQUAQYBAHrQjAHEBMRQIwxNQyzCZAgMlcK0x+B3jEcF3McsfUxrRRzArA9EgM1jDIOph5D5mPaDYYOIQpgFgNp4PNFaYkAmBw6fMFnri/XKexP2n1GQFjBeCIMHACZOdrD/xTCKsGRNhRhdkYmeCm6atq1ZrCoZnL5JMQU1FMy4xMDCqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//vSZAAP8AsAgAGAAAgAAA0gAAABAAAAAAAAACAAADSAAAAEAqmIKaimZcYmBhVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+9JkAA/wAAAAAAAACAAADSAAAAEAAAAAAAAAIAAANIAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/70mQAD/AAAAAAAAAIAAANIAAAAQAAAAAAAAAgAAA0gAAABExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//vSZAAP8AAAAAAAAAgAAA0gAAABAAAAAAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+9JkAA/wAAAAAAAACAAADSAAAAEAAAAAAAAAIAAANIAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/70mQAD/AAAAAAAAAIAAANIAAAAQAAAAAAAAAgAAA0gAAABExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//vSZAAP8AAAAAAAAAgAAA0gAAABAAAAAAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+9JkAA/wAAAAAAAACAAADSAAAAEAAAAAAAAAIAAANIAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/70mQAD/AAAAAAAAAIAAANIAAAAQAAAAAAAAAgAAA0gAAABExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//vSZAAP8AAAAAAAAAgAAA0gAAABAAAAAAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+9JkAA/wAAAAAAAACAAADSAAAAEAAAAAAAAAIAAAAAAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/70mQAD/AAAAAAAAAIAAANIAAAAQAAAAAAAAAgAAA0gAAABExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV==">
+    </audio>
 
-    <!-- SCRIPT DE CONTROLE -->
     <script>
-        const CHAVE_ADMIN = "GOLIRAVINI_ADMIN";
-        let usuario = {
-            nickname: "",
-            peso: 78.4,
-            altura: 1.78,
-            metaAgua: 3000,
-            aguaAtual: 0,
-            tetoGasto: 50,
-            gastoAtual: 0,
-            isAdmin: false
-        };
+        // Função de Navegação entre Abas
+        function switchTab(tabId, element) {
+            // Oculta todas as abas
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const salvo = localStorage.getItem('golira_user');
-            if (salvo) {
-                usuario = JSON.parse(salvo);
-                document.getElementById('modal-cadastro').classList.add('hidden');
-                atualizarInterfaceUsuario();
-            }
-        });
+            // Remove a classe active de todos os itens da tab bar
+            const items = document.querySelectorAll('.tab-item');
+            items.forEach(item => item.classList.remove('active'));
 
-        function salvarPerfilInicial() {
-            const nickname = document.getElementById('cad-nickname').value.trim();
-            const peso = parseFloat(document.getElementById('cad-peso').value);
-            const altura = parseFloat(document.getElementById('cad-altura').value);
-            const agua = parseInt(document.getElementById('cad-agua').value) || 3000;
-            const gasto = parseInt(document.getElementById('cad-gasto').value) || 50;
-            const chave = document.getElementById('cad-chave').value.trim();
-
-            if (!nickname || !peso || !altura) {
-                alert('Por favor, preencha apelido, peso e altura.');
-                return;
-            }
-
-            usuario.nickname = nickname;
-            usuario.peso = peso;
-            usuario.altura = altura;
-            usuario.metaAgua = agua;
-            usuario.tetoGasto = gasto;
-            usuario.isAdmin = (chave === CHAVE_ADMIN);
-
-            localStorage.setItem('golira_user', JSON.stringify(usuario));
-            document.getElementById('modal-cadastro').classList.add('hidden');
-            atualizarInterfaceUsuario();
+            // Ativa a aba selecionada
+            document.getElementById('tab-' + tabId).classList.add('active');
+            element.classList.add('active');
         }
 
-        function atualizarInterfaceUsuario() {
-            document.getElementById('header-user-tag').innerText = usuario.isAdmin ? '👑 ADMIN • GOLIRA' : 'Membro • GOLIRA';
-            document.getElementById('display-peso').innerText = usuario.peso.toFixed(1);
-            document.getElementById('chart-peso-atual').innerText = usuario.peso.toFixed(1);
-            
-            let imc = usuario.peso / (usuario.altura * usuario.altura);
-            let statusIMC = "Saudável";
-            if(imc < 18.5) statusIMC = "Abaixo do peso";
-            else if(imc >= 25) statusIMC = "Sobrepeso";
-            document.getElementById('display-imc').innerText = `IMC: ${imc.toFixed(1)} (${statusIMC})`;
-
-            document.getElementById('display-gasto-atual').innerText = usuario.gastoAtual;
-            document.getElementById('display-teto-gasto').innerText = `/ ${usuario.tetoGasto}`;
-
-            atualizarBarraAgua();
-
-            if (usuario.isAdmin) {
-                document.getElementById('btn-editar-golirao').classList.remove('hidden');
-            }
-            document.getElementById('rank-user-name').innerText = `1. ${usuario.nickname} (Você)`;
-        }
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('text-sandBeige');
-                el.classList.add('text-textGray/50');
-            });
-            document.getElementById('tab-' + tabName).classList.add('active');
-            const activeBtn = document.getElementById('btn-' + tabName);
-            if(activeBtn) {
-                activeBtn.classList.remove('text-textGray/50');
-                activeBtn.classList.add('text-sandBeige');
-            }
-        }
-
-        function adicionarAgua(qtd) {
-            usuario.aguaAtual += qtd;
-            if(usuario.aguaAtual > usuario.metaAgua) usuario.aguaAtual = usuario.metaAgua;
-            atualizarBarraAgua();
-            localStorage.setItem('golira_user', JSON.stringify(usuario));
-        }
-
-        function atualizarBarraAgua() {
-            let porc = (usuario.aguaAtual / usuario.metaAgua) * 100;
-            document.getElementById('texto-agua').innerText = `${usuario.aguaAtual.toLocaleString()} / ${usuario.metaAgua.toLocaleString()} ml`;
-            document.getElementById('barra-agua').style.width = porc + '%';
-        }
-
-        function registrarGastoPrompt() {
-            let valorStr = prompt("Quanto você gastou com besteira hoje? (R$)");
-            if(!valorStr) return;
-            let valor = parseFloat(valorStr);
-            if(isNaN(valor) || valor <= 0) return;
-
-            usuario.gastoAtual += valor;
-            document.getElementById('display-gasto-atual').innerText = usuario.gastoAtual;
-            localStorage.setItem('golira_user', JSON.stringify(usuario));
-
-            const audio = document.getElementById('som-dinheiro');
-            if(audio) audio.play().catch(e => console.log("Áudio bloqueado"));
-        }
-
-        let segundosTreino = 0;
-        let intervaloCronometro = null;
-
-        function iniciarTreino(nomeFicha) {
-            segundosTreino = 0;
-            document.getElementById('painel-cronometro').classList.remove('hidden');
-            if(intervaloCronometro) clearInterval(intervaloCronometro);
-            
-            intervaloCronometro = setInterval(() => {
-                segundosTreino++;
-                let min = Math.floor(segundosTreino / 60);
-                let sec = segundosTreino % 60;
-                document.getElementById('tempo-cronometro').innerText = 
-                    String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
-            }, 1000);
-
-            alert(`Treinão "${nomeFicha}" iniciado! Foco total, GOLIRA 🦍`);
-        }
-
-        function finalizarTreinoAtivo() {
-            clearInterval(intervaloCronometro);
-            document.getElementById('painel-cronometro').classList.add('hidden');
-            
-            confetti({
-                particleCount: 120,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#58111A', '#ECD3B5', '#22c55e']
-            });
-
-            alert(`Treino concluído com sucesso! 🏆 Constância salva.`);
-        }
-
-        function abrirConfiguracoes() {
-            document.getElementById('cfg-nickname').value = usuario.nickname;
-            document.getElementById('cfg-peso').value = usuario.peso;
-            document.getElementById('cfg-altura').value = usuario.altura;
-            document.getElementById('cfg-agua').value = usuario.metaAgua;
-            document.getElementById('cfg-gasto').value = usuario.tetoGasto;
-            document.getElementById('modal-config').classList.remove('hidden');
-        }
-
-        function fecharConfiguracoes() {
-            document.getElementById('modal-config').classList.add('hidden');
-        }
-
-        function salvarConfiguracoes() {
-            usuario.nickname = document.getElementById('cfg-nickname').value.trim() || usuario.nickname;
-            usuario.peso = parseFloat(document.getElementById('cfg-peso').value) || usuario.peso;
-            usuario.altura = parseFloat(document.getElementById('cfg-altura').value) || usuario.altura;
-            usuario.metaAgua = parseInt(document.getElementById('cfg-agua').value) || usuario.metaAgua;
-            usuario.tetoGasto = parseInt(document.getElementById('cfg-gasto').value) || usuario.tetoGasto;
-
-            localStorage.setItem('golira_user', JSON.stringify(usuario));
-            fecharConfiguracoes();
-            atualizarInterfaceUsuario();
-            alert('Configurações salvas com sucesso!');
-        }
-
-        function editarMuralGolirao() {
-            if(!usuario.isAdmin) return;
-            let novoAviso = prompt("Digite o novo comunicado oficial do Mural do Golirão:");
-            if(!novoAviso) return;
-            document.getElementById('texto-mural-golirao').innerText = `"${novoAviso}"`;
-            alert('Comunicado atualizado!');
-        }
-
-        function enviarRecado() {
-            const input = document.getElementById('input-recado');
-            const texto = input.value.trim();
-            if(!texto) return;
-
-            const lista = document.getElementById('lista-recados');
-            lista.innerHTML += `
-                <div class="p-2.5 rounded-xl bg-cardBorder/40 border border-cardBorder/50">
-                    <p class="font-semibold text-sandBeige text-[11px]">${usuario.nickname}</p>
-                    <p class="text-textGray/90 mt-0.5">${texto}</p>
-                </div>
-            `;
-            input.value = '';
-            lista.scrollTop = lista.scrollHeight;
-        }
-
-        async function enviarMensagemIA() {
-            const input = document.getElementById('chat-input');
-            const mensagem = input.value.trim();
-            if(!mensagem) return;
-
-            const chatContainer = document.getElementById('chat-messages');
-            chatContainer.innerHTML += `
-                <div class="bg-wineAccent/30 border border-wineAccent/40 p-3 rounded-2xl rounded-tr-sm ml-auto max-w-[85%] text-textGray">
-                    ${mensagem}
-                </div>
-            `;
-            input.value = '';
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            const loadingId = 'loading-' + Date.now();
-            chatContainer.innerHTML += `
-                <div id="${loadingId}" class="bg-cardBorder/50 p-3 rounded-2xl rounded-tl-sm text-textGray/60">
-                    GOLIRA IA está processando... 🦍
-                </div>
-            `;
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: mensagem })
+        function finishWorkout() {
+            // Toca o áudio do gorila
+            const sound = document.getElementById('monkeyAudio');
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(err => {
+                    console.log("Reprodução bloqueada ou Base64 indisponível:", err);
                 });
-                const data = await response.json();
-                
-                document.getElementById(loadingId).remove();
-                let respostaTexto = data.reply || data.error || 'Erro na resposta da IA.';
-                
-                chatContainer.innerHTML += `
-                    <div class="bg-cardBorder/50 p-3 rounded-2xl rounded-tl-sm text-textGray/90 space-y-2">
-                        <p>${respostaTexto}</p>
-                    </div>
-                `;
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-
-                if(mensagem.toLowerCase().includes('treino') || mensagem.toLowerCase().includes('ficha')) {
-                    if(confirm("Deseja que a GOLIRA IA injete este novo treino diretamente na sua aba de Fichas de Treino?")) {
-                        injetarFichaTreinoIA("Treino B - Inferiores & Core", "Perna completa e abdômen", [
-                            { nome: "Agachamento Livre", serie: "4x8 @ 70kg" },
-                            { nome: "Leg Press 45º", serie: "3x12 @ 180kg" },
-                            { nome: "Cadeira Extensora", serie: "3x15 @ 50kg" }
-                        ]);
-                    }
-                }
-            } catch (err) {
-                document.getElementById(loadingId).remove();
-                chatContainer.innerHTML += `
-                    <div class="bg-dangerRed/20 border border-dangerRed p-3 rounded-2xl rounded-tl-sm text-dangerRed">
-                        Erro ao conectar com o backend da Vercel.
-                    </div>
-                `;
             }
+
+            // Dispara os confetes com as cores oficiais
+            triggerConfetti();
+
+            // Abre o modal de feedback
+            document.getElementById('aiModal').classList.add('show');
         }
 
-        function injetarFichaTreinoIA(titulo, subtitulo, exercicios) {
-            const container = document.getElementById('container-fichas-ia');
-            let exerciciosHtml = '';
-            exercicios.forEach(ex => {
-                exerciciosHtml += `
-                    <label class="flex items-center justify-between p-2 rounded-lg bg-cardBorder/30 cursor-pointer">
-                        <div class="flex items-center space-x-2.5">
-                            <input type="checkbox" class="accent-wineAccent w-4 h-4 rounded">
-                            <span>${ex.nome}</span>
-                        </div>
-                        <span class="text-sandBeige font-mono font-medium">${ex.serie}</span>
-                    </label>
-                `;
-            });
+        function closeModal() {
+            document.getElementById('aiModal').classList.remove('show');
+        }
 
-            container.innerHTML += `
-                <div class="bg-cardBlack border border-cardBorder rounded-2xl p-4 space-y-3">
-                    <div class="flex justify-between items-center border-b border-cardBorder pb-2">
-                        <div>
-                            <h3 class="font-bold text-sandBeige text-sm">${titulo} ✨</h3>
-                            <p class="text-[10px] text-textGray/60">${subtitulo}</p>
-                        </div>
-                        <button onclick="iniciarTreino('${titulo}')" class="bg-wineAccent/20 border border-wineAccent text-sandBeige text-xs px-3 py-1.5 rounded-xl font-medium hover:bg-wineAccent hover:text-sandBeige transition">
-                            Iniciar Treino
-                        </button>
-                    </div>
-                    <div class="space-y-2 text-xs">
-                        ${exerciciosHtml}
-                    </div>
-                </div>
-            `;
-            alert('Ficha gerada e injetada com sucesso na sua aba Treino! 🦍🔥');
-            switchTab('treino');
+        function triggerConfetti() {
+            const container = document.getElementById('appContainer');
+            const colors = ['#ECD3B5', '#58111A', '#E9E9E9', '#A3333D'];
+            
+            for (let i = 0; i < 40; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.setProperty('--startX', `${Math.random() * 350}px`);
+                confetti.style.setProperty('--endX', `${(Math.random() - 0.5) * 300}px`);
+                confetti.style.animationDuration = `${1.2 + Math.random() * 1.2}s`;
+                confetti.style.animationDelay = `${Math.random() * 0.3}s`;
+                
+                container.appendChild(confetti);
+
+                setTimeout(() => {
+                    confetti.remove();
+                }, 2500);
+            }
         }
     </script>
 </body>
