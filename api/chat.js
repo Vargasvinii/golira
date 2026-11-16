@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-    // Configura CORS básico para aceitar chamadas do frontend
+    // Configura CORS básico
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -28,8 +28,8 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'API Key do Gemini não configurada na Vercel.' });
         }
 
-        // Chamada direta via fetch para a API REST do Gemini (sem dependências npm problemáticas)
-        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        // Utilizando o modelo atualizado e compatível com a API v1beta
+        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
