@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOLIRA - Estética Minimalista & Fading</title>
+    <title>GOLIRA - Aba Hoje</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -14,7 +14,7 @@
         }
 
         body {
-            background-color: #050505;
+            background-color: #000000;
             color: #E9E9E9;
             display: flex;
             justify-content: center;
@@ -23,63 +23,37 @@
             padding: 20px;
         }
 
-        .phone-frame {
+        /* Container Principal do Aplicativo */
+        .app-container {
             width: 100%;
-            max-width: 390px;
+            max-width: 420px;
             background: #000000;
-            border: 3px solid #58111A;
-            border-radius: 40px;
+            border: 2px solid #58111A;
+            border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(88, 17, 26, 0.35);
+            box-shadow: 0 20px 40px rgba(88, 17, 26, 0.3);
             display: flex;
             flex-direction: column;
             position: relative;
+            padding: 20px;
+            gap: 16px;
         }
 
-        .status-bar {
+        /* Cabeçalho da Aba */
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 24px 8px 24px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #ECD3B5;
-            background: #000000;
+            border-bottom: 1px solid rgba(236, 211, 181, 0.15);
+            padding-bottom: 12px;
         }
 
-        .app-header {
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(236, 211, 181, 0.1);
-            background: rgba(88, 17, 26, 0.15);
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .brand-icon {
-            width: 36px;
-            height: 36px;
-            background: #58111A;
-            border: 1px solid #ECD3B5;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: #ECD3B5;
-        }
-
-        .brand-title {
-            font-size: 20px;
+        .section-title {
+            font-size: 16px;
             font-weight: 800;
-            letter-spacing: 1px;
             color: #ECD3B5;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .user-badge {
@@ -92,290 +66,146 @@
             font-weight: 600;
         }
 
-        .app-content {
-            padding: 20px;
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            padding-bottom: 90px;
-        }
-
-        .section-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #ECD3B5;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .water-tracker-card {
-            background: linear-gradient(135deg, rgba(88, 17, 26, 0.3) 0%, rgba(10, 10, 10, 0.9) 100%);
-            border: 1px solid rgba(236, 211, 181, 0.25);
+        /* Cards Funcionais */
+        .card-box {
+            background: rgba(15, 15, 15, 0.95);
+            border: 1px solid rgba(236, 211, 181, 0.15);
             border-radius: 16px;
-            padding: 16px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
-        .water-header {
+        .card-box.active-day {
+            background: linear-gradient(135deg, rgba(88, 17, 26, 0.35) 0%, rgba(5, 5, 5, 0.95) 100%);
+            border-color: rgba(236, 211, 181, 0.4);
+        }
+
+        .card-header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .water-info h4 {
-            font-size: 14px;
+        .card-title-text {
+            font-size: 15px;
             font-weight: 700;
             color: #ECD3B5;
         }
 
-        .water-info p {
-            font-size: 12px;
-            color: rgba(233, 233, 233, 0.6);
-        }
-
-        .water-amount {
-            font-size: 16px;
-            font-weight: 800;
+        .card-tag {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            background: rgba(236, 211, 181, 0.1);
+            border: 1px solid rgba(236, 211, 181, 0.3);
+            border-radius: 8px;
             color: #ECD3B5;
+            text-transform: uppercase;
         }
 
-        /* Barra de Progresso Dinâmica (Vermelho p/ Verde) */
+        .card-body-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(233, 233, 233, 0.85);
+            line-height: 1.5;
+        }
+
+        /* Barra de Progresso Funcional para Hidratação/Metas */
         .progress-bar-container {
             width: 100%;
-            height: 8px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+            border-radius: 10px;
+            height: 8px;
             overflow: hidden;
-            position: relative;
+            margin-top: 4px;
         }
 
         .progress-bar-fill {
-            width: 70%; /* Exemplo 2.5L de 3.5L */
             height: 100%;
-            background: linear-gradient(90deg, #58111A 0%, #EAB308 60%, #4ADE80 100%);
-            border-radius: 4px;
+            background: #ECD3B5;
+            border-radius: 10px;
+            width: 80%; /* Valor dinâmico simulado */
             transition: width 0.3s ease;
         }
 
-        .water-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .action-btn {
-            flex: 1;
+        .btn-action {
             background: #58111A;
             border: 1px solid #ECD3B5;
             color: #ECD3B5;
-            padding: 8px;
+            padding: 10px 14px;
             border-radius: 10px;
             font-size: 12px;
             font-weight: 700;
             cursor: pointer;
+            transition: all 0.2s;
             text-align: center;
+            margin-top: 4px;
         }
 
-        .habit-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        /* Hábito Padrão */
-        .habit-card {
-            background: rgba(20, 20, 20, 0.8);
-            border: 1px solid rgba(236, 211, 181, 0.15);
-            border-radius: 14px;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.3s ease;
-        }
-
-        .habit-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* Emojis uniformes na cor Classic Beige */
-        .habit-icon {
-            font-size: 16px;
-            filter: drop-shadow(0 0 2px rgba(236, 211, 181, 0.3));
-        }
-
-        .habit-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: #E9E9E9;
-        }
-
-        .custom-checkbox {
-            width: 22px;
-            height: 22px;
-            border: 2px solid #ECD3B5;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-        }
-
-        /* Hábito Concluído: Vermelho opaco/escuro + Invisibilidade suave (Sem risco no texto) */
-        .habit-card.checked {
-            background: rgba(88, 17, 26, 0.25); /* Vermelho vinho profundo opaco */
-            border-color: rgba(88, 17, 26, 0.5);
-            opacity: 0.45; /* Efeito de invisibilidade / apagado */
-        }
-
-        .habit-card.checked .habit-name {
-            color: rgba(233, 233, 233, 0.6);
-            text-decoration: none; /* Sem risco */
-        }
-
-        .habit-card.checked .custom-checkbox {
-            background: #58111A;
-            border-color: rgba(236, 211, 181, 0.4);
-            color: #ECD3B5;
-            font-size: 11px;
-        }
-
-        .tab-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #000000;
-            border-top: 1px solid rgba(236, 211, 181, 0.15);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 10px 24px 10px;
-        }
-
-        .tab-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: rgba(233, 233, 233, 0.4);
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .tab-item.active {
-            color: #ECD3B5;
-        }
-
-        .tab-item span.icon {
-            font-size: 18px;
+        .btn-action:hover {
+            background: #ECD3B5;
+            color: #000000;
         }
     </style>
 </head>
 <body>
 
-    <div class="phone-frame">
-        <div class="status-bar">
-            <span>13:10</span>
-            <span>GOLIRA OS</span>
-            <span>100% 🦍</span>
-        </div>
-
-        <div class="app-header">
-            <div class="brand">
-                <div class="brand-icon">🦍</div>
-                <div class="brand-title">GOLIRA</div>
-            </div>
+    <div class="app-container">
+        <!-- Cabeçalho da Aba Hoje -->
+        <div class="section-header">
+            <div class="section-title">GOLIRA 🦍 | Hoje</div>
             <div class="user-badge">VINICIUS</div>
         </div>
 
-        <div class="app-content">
-            
-            <div>
-                <div class="section-title">Hidratação da Matilha</div>
-                <div class="water-tracker-card">
-                    <div class="water-header">
-                        <div class="water-info">
-                            <h4>Meta Diária</h4>
-                            <p>Controle de Garrafinha</p>
-                        </div>
-                        <div class="water-amount">2.5L / 3.5L</div>
-                    </div>
-                    <!-- Barra de progresso dinâmica (vermelho p/ verde) -->
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill"></div>
-                    </div>
-                    <div class="water-actions">
-                        <button class="action-btn">+ 300ml</button>
-                        <button class="action-btn">+ 500ml</button>
-                        <button class="action-btn">+ 750ml</button>
-                    </div>
-                </div>
+        <!-- Card Resumo da Matilha -->
+        <div class="card-box active-day">
+            <div class="card-header-flex">
+                <span class="card-title-text">Status da Matilha</span>
+                <span class="card-tag">Em Dia</span>
             </div>
-
-            <div>
-                <div class="section-title">Hábitos & Metas de Hoje</div>
-                <div class="habit-list">
-                    <!-- Hábito Concluído (Filtro de opacidade e vinho opaco, sem risco) -->
-                    <div class="habit-card checked">
-                        <div class="habit-info">
-                            <span class="habit-icon">⚡</span>
-                            <span class="habit-name">Treino Pesado (Membros Superiores)</span>
-                        </div>
-                        <div class="custom-checkbox">✓</div>
-                    </div>
-
-                    <!-- Hábito Pendente -->
-                    <div class="habit-card">
-                        <div class="habit-info">
-                            <span class="habit-icon">💧</span>
-                            <span class="habit-name">Dieta 100% Limpa</span>
-                        </div>
-                        <div class="custom-checkbox"></div>
-                    </div>
-
-                    <!-- Hábito Pendente -->
-                    <div class="habit-card">
-                        <div class="habit-info">
-                            <span class="habit-icon">🎯</span>
-                            <span class="habit-name">Foco nos Objetivos & Metas</span>
-                        </div>
-                        <div class="custom-checkbox"></div>
-                    </div>
+            <div class="card-body-content">
+                <div>💧 Hidratação: <strong id="hydrationText">2.4L / 3.0L</strong></div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="hydrationBar" style="width: 80%;"></div>
                 </div>
+                <div style="margin-top: 4px;">💸 Gastos de Hoje: <strong>R$ 45,00</strong> (Meta: R$ 80,00)</div>
+                <div>💪 Próximo Treino: Peito & Tríceps (Agendado)</div>
             </div>
-
+            <button class="btn-action" onclick="addWater()">+ Registrar Água (300ml) 💧</button>
         </div>
 
-        <div class="tab-bar">
-            <div class="tab-item active">
-                <span class="icon">⚡</span>
-                <span>Hoje</span>
+        <!-- Card de Atalho / Destaque do Dia -->
+        <div class="card-box">
+            <div class="card-header-flex">
+                <span class="card-title-text">Foco do Dia</span>
+                <span class="card-tag">Prioridade</span>
             </div>
-            <div class="tab-item">
-                <span class="icon">💪</span>
-                <span>Treinos</span>
-            </div>
-            <div class="tab-item">
-                <span class="icon">💸</span>
-                <span>Gastos</span>
-            </div>
-            <div class="tab-item">
-                <span class="icon">💬</span>
-                <span>Mural</span>
-            </div>
-            <div class="tab-item">
-                <span class="icon">🤖</span>
-                <span>IA</span>
+            <div class="card-body-content">
+                <p>Manter a consistência na carga do supino e registrar todos os gastos de alimentação para fechar o dia no verde com a matilha! 🔥</p>
             </div>
         </div>
     </div>
 
+    <script>
+        // Lógica simples e funcional para interagir com a hidratação
+        let currentWater = 2.4;
+        const maxWater = 3.0;
+
+        function addWater() {
+            currentWater = Math.min(maxWater, currentWater + 0.3);
+            let percentage = (currentWater / maxWater) * 100;
+            
+            document.getElementById('hydrationText').innerText = `${currentWater.toFixed(1)}L / ${maxWater.toFixed(1)}L`;
+            document.getElementById('hydrationBar').style.width = `${percentage}%`;
+            
+            if(currentWater >= maxWater) {
+                alert('Meta de hidratação diária atingida, matilha! 🦍💧');
+            }
+        }
+    </script>
 </body>
 </html>
