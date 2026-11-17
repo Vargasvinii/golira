@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOLIRA - Aba Hoje</title>
+    <title>GOLIRA - Aba Hoje (Completa)</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -23,14 +23,15 @@
             padding: 20px;
         }
 
-        /* Container Principal do Aplicativo */
+        /* Container Principal Estendido (Tela Toda) */
         .app-container {
             width: 100%;
             max-width: 420px;
+            height: 750px;
             background: #000000;
             border: 2px solid #58111A;
             border-radius: 24px;
-            overflow: hidden;
+            overflow-y: auto;
             box-shadow: 0 20px 40px rgba(88, 17, 26, 0.3);
             display: flex;
             flex-direction: column;
@@ -46,6 +47,10 @@
             align-items: center;
             border-bottom: 1px solid rgba(236, 211, 181, 0.15);
             padding-bottom: 12px;
+            position: sticky;
+            top: 0;
+            background: #000000;
+            z-index: 5;
         }
 
         .section-title {
@@ -114,7 +119,7 @@
             line-height: 1.5;
         }
 
-        /* Barra de Progresso Funcional para Hidratação/Metas */
+        /* Barra de Progresso de Hidratação */
         .progress-bar-container {
             width: 100%;
             background: rgba(255, 255, 255, 0.1);
@@ -128,7 +133,7 @@
             height: 100%;
             background: #ECD3B5;
             border-radius: 10px;
-            width: 80%; /* Valor dinâmico simulado */
+            width: 0%;
             transition: width 0.3s ease;
         }
 
@@ -150,6 +155,23 @@
             background: #ECD3B5;
             color: #000000;
         }
+
+        /* Input Customizado para o Hábito em Aberto */
+        .custom-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(236, 211, 181, 0.3);
+            border-radius: 10px;
+            padding: 8px 12px;
+            color: #E9E9E9;
+            font-size: 12px;
+            outline: none;
+            margin-top: 4px;
+        }
+
+        .custom-input:focus {
+            border-color: #ECD3B5;
+        }
     </style>
 </head>
 <body>
@@ -161,50 +183,83 @@
             <div class="user-badge">VINICIUS</div>
         </div>
 
-        <!-- Card Resumo da Matilha -->
+        <!-- Card de Hidratação (500ml por clique) -->
         <div class="card-box active-day">
             <div class="card-header-flex">
-                <span class="card-title-text">Status da Matilha</span>
-                <span class="card-tag">Em Dia</span>
+                <span class="card-title-text">Meta de Hidratação</span>
+                <span class="card-tag">Água</span>
             </div>
             <div class="card-body-content">
-                <div>💧 Hidratação: <strong id="hydrationText">2.4L / 3.0L</strong></div>
+                <div>💧 Consumido hoje: <strong id="hydrationText">0.0L / 3.0L</strong></div>
                 <div class="progress-bar-container">
-                    <div class="progress-bar-fill" id="hydrationBar" style="width: 80%;"></div>
+                    <div class="progress-bar-fill" id="hydrationBar" style="width: 0%;"></div>
                 </div>
-                <div style="margin-top: 4px;">💸 Gastos de Hoje: <strong>R$ 45,00</strong> (Meta: R$ 80,00)</div>
-                <div>💪 Próximo Treino: Peito & Tríceps (Agendado)</div>
             </div>
-            <button class="btn-action" onclick="addWater()">+ Registrar Água (300ml) 💧</button>
+            <button class="btn-action" onclick="addWater()">+ Registrar 500ml de Água 💧</button>
         </div>
 
-        <!-- Card de Atalho / Destaque do Dia -->
+        <!-- Card de Gasto Diário -->
         <div class="card-box">
             <div class="card-header-flex">
-                <span class="card-title-text">Foco do Dia</span>
+                <span class="card-title-text">Controle Financeiro</span>
+                <span class="card-tag">Gastos</span>
+            </div>
+            <div class="card-body-content">
+                <div>💸 Gasto acumulado hoje: <strong id="expenseText">R$ 0,00</strong></div>
+                <div>🎯 Limite diário: R$ 80,00</div>
+            </div>
+            <button class="btn-action" onclick="addExpense()">+ Adicionar Gasto R$ 15,00</button>
+        </div>
+
+        <!-- Card Personalizado em Aberto (Ex: Cigarros ou outro hábito) -->
+        <div class="card-box">
+            <div class="card-header-flex">
+                <span class="card-title-text">Monitoramento Personalizado</span>
+                <span class="card-tag">Hábito Livre</span>
+            </div>
+            <div class="card-body-content">
+                <label style="font-size: 11px; color: rgba(236,211,181,0.8);">Nome do hábito (Ex: Cigarros, Café, Leitura):</label>
+                <input type="text" class="custom-input" id="customHabitName" placeholder="Ex: Cigarros consumidos hoje">
+                
+                <label style="font-size: 11px; color: rgba(236,211,181,0.8); margin-top: 6px;">Quantidade / Status:</label>
+                <input type="text" class="custom-input" id="customHabitValue" placeholder="Nenhum registro (em aberto)">
+            </div>
+        </div>
+
+        <!-- Card de Foco do Dia -->
+        <div class="card-box">
+            <div class="card-header-flex">
+                <span class="card-title-text">Foco da Matilha</span>
                 <span class="card-tag">Prioridade</span>
             </div>
             <div class="card-body-content">
-                <p>Manter a consistência na carga do supino e registrar todos os gastos de alimentação para fechar o dia no verde com a matilha! 🔥</p>
+                <p>Mantenha o foco nos treinos, siga o plano nutricional e registre seus hábitos com precisão para fechar o dia no verde! 🔥</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Lógica simples e funcional para interagir com a hidratação
-        let currentWater = 2.4;
+        // Lógica de Hidratação (Adiciona 500ml por clique)
+        let currentWater = 0.0;
         const maxWater = 3.0;
 
         function addWater() {
-            currentWater = Math.min(maxWater, currentWater + 0.3);
+            currentWater = Math.min(maxWater, currentWater + 0.5);
             let percentage = (currentWater / maxWater) * 100;
             
             document.getElementById('hydrationText').innerText = `${currentWater.toFixed(1)}L / ${maxWater.toFixed(1)}L`;
             document.getElementById('hydrationBar').style.width = `${percentage}%`;
             
             if(currentWater >= maxWater) {
-                alert('Meta de hidratação diária atingida, matilha! 🦍💧');
+                alert('Meta de hidratação diária atingida com sucesso, matilha! 🦍💧');
             }
+        }
+
+        // Lógica Simples de Exemplo para Gastos
+        let currentExpense = 0.0;
+        function addExpense() {
+            currentExpense += 15.0;
+            document.getElementById('expenseText').innerText = `R$ ${currentExpense.toFixed(2).replace('.', ',')}`;
         }
     </script>
 </body>
