@@ -73,7 +73,6 @@
             color: #ECD3B5;
         }
 
-        /* Crachá do usuário clicável em qualquer aba */
         .user-badge {
             font-size: 11px;
             padding: 6px 12px;
@@ -89,7 +88,6 @@
         .user-badge:hover {
             background: rgba(88, 17, 26, 0.4);
             border-color: #ECD3B5;
-            transform: scale(1.03);
         }
 
         .app-content {
@@ -102,21 +100,14 @@
             overflow-y: auto;
         }
 
-        /* Sistema de Abas */
         .tab-pane {
             display: none;
             flex-direction: column;
             gap: 16px;
-            animation: fadeIn 0.25s ease;
         }
 
         .tab-pane.active {
             display: flex;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .section-title {
@@ -128,7 +119,6 @@
             margin-bottom: 6px;
         }
 
-        /* Cartões Genéricos / Padrão */
         .card-box {
             background: rgba(15, 15, 15, 0.9);
             border: 1px solid rgba(236, 211, 181, 0.15);
@@ -139,7 +129,7 @@
             gap: 12px;
         }
 
-        /* --- ABA HISTÓRICO --- */
+        /* Streak Neon */
         .neon-streak-card {
             background: #050505;
             border: 1px solid #FF2A4D;
@@ -151,310 +141,100 @@
             box-shadow: 0 0 15px rgba(255, 42, 77, 0.25);
         }
 
-        .streak-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .streak-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: rgba(233, 233, 233, 0.7);
-            text-transform: uppercase;
-        }
-
-        .streak-value {
-            font-size: 20px;
-            font-weight: 800;
-            color: #FF2A4D;
-            text-shadow: 0 0 10px rgba(255, 42, 77, 0.5);
-        }
+        .streak-info { display: flex; flex-direction: column; gap: 4px; }
+        .streak-label { font-size: 11px; font-weight: 700; color: rgba(233, 233, 233, 0.7); text-transform: uppercase; }
+        .streak-value { font-size: 20px; font-weight: 800; color: #FF2A4D; text-shadow: 0 0 10px rgba(255, 42, 77, 0.5); }
 
         @keyframes flamePulse {
             0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 4px #FF2A4D); }
             50% { transform: scale(1.15) rotate(-5deg); filter: drop-shadow(0 0 12px #FF5500); }
             100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 4px #FF2A4D); }
         }
+        .streak-icon { font-size: 32px; display: inline-block; animation: flamePulse 1.4s infinite ease-in-out; }
 
-        .streak-icon {
-            font-size: 32px;
-            display: inline-block;
-            animation: flamePulse 1.4s infinite ease-in-out;
-        }
-
-        .days-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-        }
-
-        .day-col {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .day-name {
-            font-size: 9px;
-            color: rgba(233, 233, 233, 0.5);
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .day-node {
-            width: 100%;
-            aspect-ratio: 1;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 700;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
+        /* Histórico Semanal */
+        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+        .day-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .day-name { font-size: 9px; color: rgba(233, 233, 233, 0.5); font-weight: 700; text-transform: uppercase; }
+        .day-node { width: 100%; aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.05); }
         .level-bad { background: #5A121A; color: #FFA6B2; border-color: #8C1C29; }      
         .level-mid { background: #4D4514; color: #FFE680; border-color: #807222; }      
         .level-good { background: #114C23; color: #A3FFC2; border-color: #1E823B; }     
         .level-top { background: #0E6B2D; color: #C4FFD7; border-color: #2ECC71; box-shadow: 0 0 8px rgba(46,204,113,0.3); } 
 
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .metric-value { font-size: 18px; font-weight: 800; color: #ECD3B5; }
+        .metric-sub { font-size: 10px; color: #2ECC71; font-weight: 600; }
 
-        .metric-value {
-            font-size: 18px;
-            font-weight: 800;
-            color: #ECD3B5;
-        }
-
-        .metric-sub {
-            font-size: 10px;
-            color: #2ECC71;
-            font-weight: 600;
-        }
-
-        /* --- ABA MURAL --- */
+        /* Mural */
         .admin-card {
             background: linear-gradient(135deg, rgba(88, 17, 26, 0.4) 0%, rgba(15, 15, 15, 0.95) 100%);
             border: 1px solid rgba(236, 211, 181, 0.4);
-            border-radius: 16px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px;
         }
-
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .admin-tag {
-            font-size: 10px;
-            font-weight: 700;
-            background: #58111A;
-            color: #ECD3B5;
-            padding: 3px 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(236, 211, 181, 0.3);
-            text-transform: uppercase;
-        }
-
+        .admin-header { display: flex; justify-content: space-between; align-items: center; }
+        .admin-tag { font-size: 10px; font-weight: 700; background: #58111A; color: #ECD3B5; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(236, 211, 181, 0.3); text-transform: uppercase; }
         .post-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(236, 211, 181, 0.2);
-            border-radius: 10px;
-            padding: 12px;
-            color: #E9E9E9;
-            font-size: 13px;
-            resize: none;
-            height: 70px;
-            outline: none;
+            width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(236, 211, 181, 0.2);
+            border-radius: 10px; padding: 12px; color: #E9E9E9; font-size: 13px; resize: none; height: 70px; outline: none;
         }
-
         .btn-action {
-            background: #58111A;
-            border: 1px solid #ECD3B5;
-            color: #ECD3B5;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            align-self: flex-end;
+            background: #58111A; border: 1px solid #ECD3B5; color: #ECD3B5; padding: 10px 16px;
+            border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; align-self: flex-end;
         }
-
-        .btn-action:hover {
-            background: #ECD3B5;
-            color: #000000;
-        }
-
+        .btn-action:hover { background: #ECD3B5; color: #000000; }
         .mural-card {
-            background: rgba(15, 15, 15, 0.9);
-            border: 1px solid rgba(236, 211, 181, 0.15);
-            border-radius: 16px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            background: rgba(15, 15, 15, 0.9); border: 1px solid rgba(236, 211, 181, 0.15);
+            border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px;
         }
-
-        .mural-reactions {
-            display: flex;
-            gap: 8px;
-            border-top: 1px solid rgba(236, 211, 181, 0.08);
-            padding-top: 8px;
-        }
-
+        .mural-reactions { display: flex; gap: 8px; border-top: 1px solid rgba(236, 211, 181, 0.08); padding-top: 8px; }
         .reaction-btn {
-            background: rgba(236, 211, 181, 0.05);
-            border: 1px solid rgba(236, 211, 181, 0.15);
-            border-radius: 8px;
-            padding: 4px 8px;
-            font-size: 11px;
-            color: #ECD3B5;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            background: rgba(236, 211, 181, 0.05); border: 1px solid rgba(236, 211, 181, 0.15);
+            border-radius: 8px; padding: 4px 8px; font-size: 11px; color: #ECD3B5; cursor: pointer; display: flex; align-items: center; gap: 4px;
         }
 
-        /* --- ABA IA / GORILÃO --- */
+        /* IA / Gorilão */
         .gorila-welcome-card {
             background: linear-gradient(135deg, rgba(88, 17, 26, 0.85) 0%, rgba(20, 5, 8, 0.95) 100%);
-            border: 1px solid rgba(236, 211, 181, 0.4);
-            border-radius: 16px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            border: 1px solid rgba(236, 211, 181, 0.4); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px;
         }
+        .chat-feed { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; }
+        .chat-bubble { max-width: 85%; padding: 12px 14px; border-radius: 14px; font-size: 13px; line-height: 1.4; }
+        .chat-bubble.ai { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(236, 211, 181, 0.15); color: #E9E9E9; align-self: flex-start; border-top-left-radius: 4px; }
+        .chat-bubble.user { background: #58111A; border: 1px solid rgba(236, 211, 181, 0.3); color: #ECD3B5; align-self: flex-end; border-top-right-radius: 4px; }
+        .chat-input-box { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(236, 211, 181, 0.3); border-radius: 14px; display: flex; align-items: center; padding: 8px 12px; gap: 10px; }
+        .chat-input { flex: 1; background: transparent; border: none; color: #E9E9E9; font-size: 13px; outline: none; }
+        .send-btn { background: #58111A; border: 1px solid #ECD3B5; color: #ECD3B5; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        .chat-feed {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .chat-bubble {
-            max-width: 85%;
-            padding: 12px 14px;
-            border-radius: 14px;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
-        .chat-bubble.ai {
-            background: rgba(15, 15, 15, 0.95);
-            border: 1px solid rgba(236, 211, 181, 0.15);
-            color: #E9E9E9;
-            align-self: flex-start;
-            border-top-left-radius: 4px;
-        }
-
-        .chat-bubble.user {
-            background: #58111A;
-            border: 1px solid rgba(236, 211, 181, 0.3);
-            color: #ECD3B5;
-            align-self: flex-end;
-            border-top-right-radius: 4px;
-        }
-
-        .chat-input-box {
-            background: rgba(15, 15, 15, 0.95);
-            border: 1px solid rgba(236, 211, 181, 0.3);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            gap: 10px;
-        }
-
-        .chat-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #E9E9E9;
-            font-size: 13px;
-            outline: none;
-        }
-
-        .send-btn {
-            background: #58111A;
-            border: 1px solid #ECD3B5;
-            color: #ECD3B5;
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        /* --- ABA HOJE & TREINO --- */
-        .water-btn-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        /* Modal de Configurações */
+        /* Modal Perfil */
         .profile-modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px;
         }
-
         .profile-modal-content {
-            width: 100%; max-width: 400px;
-            background: #0F0F0F;
-            border: 1px solid rgba(236, 211, 181, 0.3);
-            border-radius: 20px;
-            padding: 20px;
-            display: flex; flex-direction: column; gap: 14px;
+            width: 100%; max-width: 400px; background: #0F0F0F;
+            border: 1px solid rgba(236, 211, 181, 0.3); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 14px;
         }
-
         .input-group { display: flex; flex-direction: column; gap: 4px; }
         .input-label { font-size: 11px; font-weight: 600; color: rgba(233, 233, 233, 0.7); }
         .form-input {
-            width: 100%; background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(236, 211, 181, 0.2);
+            width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(236, 211, 181, 0.2);
             border-radius: 10px; padding: 10px; color: #E9E9E9; font-size: 12px; outline: none;
         }
 
         /* Tab Bar Inferior */
         .tab-bar {
-            position: fixed;
-            bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 480px;
-            background: #000000;
-            border-top: 1px solid rgba(236, 211, 181, 0.15);
-            display: flex; justify-content: space-around;
-            padding: 12px 10px 20px 10px;
-            z-index: 100; backdrop-filter: blur(10px);
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 480px; background: #000000;
+            border-top: 1px solid rgba(236, 211, 181, 0.15); display: flex; justify-content: space-around;
+            padding: 12px 10px 20px 10px; z-index: 100; backdrop-filter: blur(10px);
         }
-
         .tab-item {
             display: flex; flex-direction: column; align-items: center; gap: 4px;
             color: rgba(233, 233, 233, 0.4); font-size: 10px; font-weight: 600;
-            text-transform: uppercase; text-decoration: none; cursor: pointer;
-            transition: color 0.2s;
+            text-transform: uppercase; text-decoration: none; cursor: pointer; transition: color 0.2s;
         }
-
         .tab-item.active { color: #ECD3B5; }
         .tab-item span.icon { font-size: 18px; }
     </style>
@@ -481,7 +261,7 @@
                     <div class="card-box">
                         <span style="font-size: 12px; font-weight: 700; color: #ECD3B5;">💧 Hidratação da Matilha</span>
                         <p style="font-size: 13px;" id="waterStatus">Consumido: 1.500ml / <span id="targetWaterDisplay">3000</span>ml</p>
-                        <div class="water-btn-group">
+                        <div style="display: flex; gap: 8px;">
                             <button class="btn-action" style="flex:1;" onclick="addWater(300)">+ 300ml</button>
                             <button class="btn-action" style="flex:1;" onclick="addWater(500)">+ 500ml</button>
                         </div>
@@ -662,10 +442,37 @@
     </div>
 
     <script>
-        let userProfile = {
+        // Estado local inicial ou recuperado do LocalStorage
+        let userProfile = JSON.parse(localStorage.getItem('golira_profile')) || {
             name: "VINICIUS", weight: 78.5, height: 1.78, waterGoal: 3000,
             habitGoal: "Máximo 5 cigarros/dia", groupTag: "GOLIRA-SP", currentWater: 1500
         };
+
+        // Inicializa a tela com os dados salvos
+        window.onload = function() {
+            updateUI();
+        };
+
+        function updateUI() {
+            document.getElementById('userBadgeBtn').textContent = userProfile.name;
+            document.getElementById('targetWaterDisplay').textContent = userProfile.waterGoal;
+            document.getElementById('waterStatus').innerHTML = `Consumido: ${userProfile.currentWater}ml / <span>${userProfile.waterGoal}</span>ml`;
+            document.getElementById('habitDisplay').textContent = `Meta: ${userProfile.habitGoal}`;
+            document.getElementById('groupTagDisplay').textContent = `Tag: #${userProfile.groupTag}`;
+
+            if (userProfile.weight > 0 && userProfile.height > 0) {
+                const imc = (userProfile.weight / (userProfile.height * userProfile.height)).toFixed(1);
+                document.getElementById('imcValueDisplay').textContent = imc;
+            }
+
+            // Preenche os campos do modal com os valores atuais
+            document.getElementById('modalUserName').value = userProfile.name;
+            document.getElementById('modalUserWeight').value = userProfile.weight;
+            document.getElementById('modalUserHeight').value = userProfile.height;
+            document.getElementById('modalWaterGoal').value = userProfile.waterGoal;
+            document.getElementById('modalHabitGoal').value = userProfile.habitGoal;
+            document.getElementById('modalGroupTag').value = userProfile.groupTag;
+        }
 
         // Alternância de Abas
         function switchTab(tabId, element) {
@@ -688,23 +495,17 @@
             userProfile.habitGoal = document.getElementById('modalHabitGoal').value;
             userProfile.groupTag = document.getElementById('modalGroupTag').value.trim().toUpperCase() || "GOLIRA";
 
-            // Atualiza Interface
-            document.getElementById('userBadgeBtn').textContent = userProfile.name;
-            document.getElementById('targetWaterDisplay').textContent = userProfile.waterGoal;
-            document.getElementById('habitDisplay').textContent = `Meta: ${userProfile.habitGoal}`;
-            document.getElementById('groupTagDisplay').textContent = `Tag: #${userProfile.groupTag}`;
+            // Salva no navegador
+            localStorage.setItem('golira_profile', JSON.stringify(userProfile));
 
-            if (userProfile.weight > 0 && userProfile.height > 0) {
-                const imc = (userProfile.weight / (userProfile.height * userProfile.height)).toFixed(1);
-                document.getElementById('imcValueDisplay').textContent = imc;
-            }
-
+            updateUI();
             closeProfileModal();
         }
 
         // Controle de Água
         function addWater(amount) {
             userProfile.currentWater += amount;
+            localStorage.setItem('golira_profile', JSON.stringify(userProfile));
             document.getElementById('waterStatus').innerHTML = `Consumido: ${userProfile.currentWater}ml / <span>${userProfile.waterGoal}</span>ml`;
         }
 
@@ -769,6 +570,3 @@
     </script>
 </body>
 </html>
-    </script>
-</body>
-</html> 
