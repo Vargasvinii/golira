@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOLIRA - App Oficial</title>
+    <title>GOLIRA - Estética Minimalista & Fading</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -14,7 +14,7 @@
         }
 
         body {
-            background-color: #000000;
+            background-color: #050505;
             color: #E9E9E9;
             display: flex;
             justify-content: center;
@@ -23,7 +23,6 @@
             padding: 20px;
         }
 
-        /* Mockup do Celular */
         .phone-frame {
             width: 100%;
             max-width: 390px;
@@ -31,28 +30,56 @@
             border: 3px solid #58111A;
             border-radius: 40px;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(88, 17, 26, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(88, 17, 26, 0.35);
             display: flex;
             flex-direction: column;
             position: relative;
-            height: 780px;
         }
 
-        /* Cabeçalho Oficial GOLIRA */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px 8px 24px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ECD3B5;
+            background: #000000;
+        }
+
         .app-header {
-            padding: 18px 20px 14px 20px;
+            padding: 16px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(236, 211, 181, 0.1);
-            background: rgba(88, 17, 26, 0.2);
-            z-index: 5;
+            background: rgba(88, 17, 26, 0.15);
         }
 
         .brand {
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: #58111A;
+            border: 1px solid #ECD3B5;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #ECD3B5;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #ECD3B5;
         }
 
         .user-badge {
@@ -65,7 +92,6 @@
             font-weight: 600;
         }
 
-        /* Container do Conteúdo com a Marca d'Água do Gorila ao Fundo */
         .app-content {
             padding: 20px;
             flex: 1;
@@ -74,45 +100,6 @@
             flex-direction: column;
             gap: 18px;
             padding-bottom: 90px;
-            position: relative;
-            background-color: #000000;
-        }
-
-        /* Marca d'água sutil do gorila no fundo */
-        .app-content::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 280px;
-            height: 280px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500"><path fill="%2358111A" opacity="0.10" d="M250 80C170 80 110 130 90 200c-20 70-10 120 15 160 20 30 50 50 80 60 20 7 40 10 65 10s45-3 65-10c30-10 60-30 80-60 25-40 35-90 15-160-20-70-80-120-160-120zm0 40c60 0 110 40 125 100 12 50 3 90-15 120-15 25-35 40-60 48-18 6-35 8-50 8s-32-2-50-8c-25-8-45-23-60-48-18-30-27-70-15-120 15-60 65-100 125-100zm-75 95a25 25 0 1 0 0 50 25 25 0 0 0 0-50zm150 0a25 25 0 1 0 0 50 25 25 0 0 0 0-50zm-75 60c-25 0-45 15-55 35-5 10 2 20 12 20h86c10 0 17-10 12-20-10-20-30-35-55-35z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Gerenciamento das Abas */
-        .tab-pane {
-            display: none;
-            flex-direction: column;
-            gap: 16px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .tab-pane.active {
-            display: flex;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
         }
 
         .section-title {
@@ -121,106 +108,144 @@
             color: #ECD3B5;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+            margin-bottom: 10px;
         }
 
-        /* Cards Gerais */
-        .card-box {
-            background: rgba(15, 15, 15, 0.9);
-            border: 1px solid rgba(236, 211, 181, 0.15);
+        .water-tracker-card {
+            background: linear-gradient(135deg, rgba(88, 17, 26, 0.3) 0%, rgba(10, 10, 10, 0.9) 100%);
+            border: 1px solid rgba(236, 211, 181, 0.25);
             border-radius: 16px;
             padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .card-box.active-day {
-            background: linear-gradient(135deg, rgba(88, 17, 26, 0.35) 0%, rgba(5, 5, 5, 0.95) 100%);
-            border-color: rgba(236, 211, 181, 0.4);
-        }
-
-        .card-header-flex {
+        .water-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .card-title-text {
+        .water-info h4 {
             font-size: 14px;
             font-weight: 700;
             color: #ECD3B5;
         }
 
-        .card-tag {
-            font-size: 10px;
-            font-weight: 700;
-            padding: 4px 8px;
-            background: rgba(236, 211, 181, 0.1);
-            border: 1px solid rgba(236, 211, 181, 0.3);
-            border-radius: 8px;
-            color: #ECD3B5;
-            text-transform: uppercase;
-        }
-
-        .card-body-text {
+        .water-info p {
             font-size: 12px;
-            color: rgba(233, 233, 233, 0.75);
-            line-height: 1.4;
+            color: rgba(233, 233, 233, 0.6);
         }
 
-        .card-footer-flex {
+        .water-amount {
+            font-size: 16px;
+            font-weight: 800;
+            color: #ECD3B5;
+        }
+
+        /* Barra de Progresso Dinâmica (Vermelho p/ Verde) */
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            width: 70%; /* Exemplo 2.5L de 3.5L */
+            height: 100%;
+            background: linear-gradient(90deg, #58111A 0%, #EAB308 60%, #4ADE80 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .water-actions {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 4px;
+            gap: 8px;
         }
 
-        .btn-action {
+        .action-btn {
+            flex: 1;
             background: #58111A;
             border: 1px solid #ECD3B5;
             color: #ECD3B5;
-            padding: 8px 14px;
+            padding: 8px;
             border-radius: 10px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
+            text-align: center;
         }
 
-        .btn-action:hover {
-            background: #ECD3B5;
-            color: #000000;
-        }
-
-        /* Estilos do Formulário de Cadastro */
-        .form-group {
+        .habit-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 10px;
         }
 
-        .form-label {
-            font-size: 11px;
+        /* Hábito Padrão */
+        .habit-card {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(236, 211, 181, 0.15);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .habit-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Emojis uniformes na cor Classic Beige */
+        .habit-icon {
+            font-size: 16px;
+            filter: drop-shadow(0 0 2px rgba(236, 211, 181, 0.3));
+        }
+
+        .habit-name {
+            font-size: 13px;
             font-weight: 600;
-            color: #ECD3B5;
-            text-transform: uppercase;
-        }
-
-        .form-input {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(236, 211, 181, 0.3);
-            border-radius: 10px;
-            padding: 10px 12px;
             color: #E9E9E9;
-            font-size: 12px;
-            outline: none;
         }
 
-        .form-input:focus {
-            border-color: #ECD3B5;
+        .custom-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #ECD3B5;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
         }
 
-        /* Tab Bar Inferior (5 Abas) */
+        /* Hábito Concluído: Vermelho opaco/escuro + Invisibilidade suave (Sem risco no texto) */
+        .habit-card.checked {
+            background: rgba(88, 17, 26, 0.25); /* Vermelho vinho profundo opaco */
+            border-color: rgba(88, 17, 26, 0.5);
+            opacity: 0.45; /* Efeito de invisibilidade / apagado */
+        }
+
+        .habit-card.checked .habit-name {
+            color: rgba(233, 233, 233, 0.6);
+            text-decoration: none; /* Sem risco */
+        }
+
+        .habit-card.checked .custom-checkbox {
+            background: #58111A;
+            border-color: rgba(236, 211, 181, 0.4);
+            color: #ECD3B5;
+            font-size: 11px;
+        }
+
         .tab-bar {
             position: absolute;
             bottom: 0;
@@ -230,23 +255,18 @@
             border-top: 1px solid rgba(236, 211, 181, 0.15);
             display: flex;
             justify-content: space-around;
-            padding: 12px 4px 24px 4px;
-            z-index: 10;
+            padding: 12px 10px 24px 10px;
         }
 
         .tab-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
             color: rgba(233, 233, 233, 0.4);
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
-            cursor: pointer;
-            background: transparent;
-            border: none;
-            flex: 1;
         }
 
         .tab-item.active {
@@ -254,345 +274,108 @@
         }
 
         .tab-item span.icon {
-            font-size: 16px;
-        }
-
-        /* Modal de Feedback da IA */
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(5px);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-card {
-            background: linear-gradient(145deg, #120305 0%, #000000 100%);
-            border: 2px solid #ECD3B5;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 330px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            box-shadow: 0 15px 35px rgba(88, 17, 26, 0.6);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-overlay.show .modal-card {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(236, 211, 181, 0.2);
-            padding-bottom: 10px;
-        }
-
-        .modal-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: #ECD3B5;
-        }
-
-        .modal-close {
-            background: transparent;
-            border: none;
-            color: #ECD3B5;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .modal-body {
-            font-size: 12px;
-            color: #E9E9E9;
-            line-height: 1.5;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .ai-badge-tag {
-            background: rgba(88, 17, 26, 0.6);
-            border: 1px solid rgba(236, 211, 181, 0.3);
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 11px;
-            color: #ECD3B5;
-            font-weight: 600;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 4px;
-        }
-
-        /* Animação de Confetes */
-        .confetti {
-            position: absolute;
-            top: -10px;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            animation: rainDown 1.8s ease-in-out forwards;
-            z-index: 105;
-            pointer-events: none;
-        }
-
-        @keyframes rainDown {
-            0% {
-                transform: translate(var(--startX), 0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--endX), 780px) rotate(1080deg);
-                opacity: 0;
-            }
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
 
     <div class="phone-frame">
-        <!-- Cabeçalho Oficial GOLIRA -->
+        <div class="status-bar">
+            <span>13:10</span>
+            <span>GOLIRA OS</span>
+            <span>100% 🦍</span>
+        </div>
+
         <div class="app-header">
             <div class="brand">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 65" height="28" style="display: block;">
-                    <!-- Gorila Vinho -->
-                    <g transform="scale(0.12) translate(5, 5)">
-                        <path fill="#58111A" d="M250 80C170 80 110 130 90 200c-20 70-10 120 15 160 20 30 50 50 80 60 20 7 40 10 65 10s45-3 65-10c30-10 60-30 80-60 25-40 35-90 15-160-20-70-80-120-160-120zm0 40c60 0 110 40 125 100 12 50 3 90-15 120-15 25-35 40-60 48-18 6-35 8-50 8s-32-2-50-8c-25-8-45-23-60-48-18-30-27-70-15-120 15-60 65-100 125-100zm-75 95a25 25 0 1 0 0 50 25 25 0 0 0 0-50zm150 0a25 25 0 1 0 0 50 25 25 0 0 0 0-50zm-75 60c-25 0-45 15-55 35-5 10 2 20 12 20h86c10 0 17-10 12-20-10-20-30-35-55-35z"/>
-                    </g>
-                    <!-- Texto GOLIRA em Bege Oficial -->
-                    <text x="55" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="24" fill="#ECD3B5" letter-spacing="2.5">GOLIRA</text>
-                </svg>
+                <div class="brand-icon">🦍</div>
+                <div class="brand-title">GOLIRA</div>
             </div>
             <div class="user-badge">VINICIUS</div>
         </div>
 
-        <!-- CONTEÚDO DINÂMICO DAS ABAS -->
-        <div class="app-content" id="appContainer">
-
-            <!-- ABA 1: HOJE -->
-            <div class="tab-pane active" id="tab-hoje">
-                <div class="section-header">
-                    <div class="section-title">Resumo de Hoje 🦍</div>
-                </div>
-                <div class="card-box active-day">
-                    <div class="card-header-flex">
-                        <span class="card-title-text">Status da Matilha</span>
-                        <span class="card-tag">Em Dia</span>
+        <div class="app-content">
+            
+            <div>
+                <div class="section-title">Hidratação da Matilha</div>
+                <div class="water-tracker-card">
+                    <div class="water-header">
+                        <div class="water-info">
+                            <h4>Meta Diária</h4>
+                            <p>Controle de Garrafinha</p>
+                        </div>
+                        <div class="water-amount">2.5L / 3.5L</div>
                     </div>
-                    <div class="card-body-text">
-                        💧 Hidratação: <strong>2.4L / 3.0L</strong><br>
-                        💸 Gastos de Hoje: <strong>R$ 45,00</strong> (Meta: R$ 80)<br>
-                        💪 Próximo Treino: Peito & Tríceps (Agendado)
+                    <!-- Barra de progresso dinâmica (vermelho p/ verde) -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill"></div>
                     </div>
-                </div>
-            </div>
-
-            <!-- ABA 2: TREINOS -->
-            <div class="tab-pane" id="tab-treinos">
-                <div class="section-header">
-                    <div class="section-title">Rotina de Treinos</div>
-                </div>
-                <div class="card-box active-day">
-                    <div class="card-header-flex">
-                        <span class="card-title-text">Segunda-feira - Peito & Tríceps</span>
-                        <span class="card-tag">Hoje</span>
-                    </div>
-                    <div class="card-body-text">
-                        • Supino Reto: 4x 8-10<br>
-                        • Supino Inclinado: 3x 10<br>
-                        • Tríceps Testa: 4x 12
-                    </div>
-                    <div class="card-footer-flex">
-                        <span style="font-size: 10px; color: rgba(236,211,181,0.6)">Sessão ativa</span>
-                        <button class="btn-action" onclick="finishWorkout()">Finalizar Treino 🦍</button>
+                    <div class="water-actions">
+                        <button class="action-btn">+ 300ml</button>
+                        <button class="action-btn">+ 500ml</button>
+                        <button class="action-btn">+ 750ml</button>
                     </div>
                 </div>
             </div>
 
-            <!-- ABA 3: GASTOS -->
-            <div class="tab-pane" id="tab-gastos">
-                <div class="section-header">
-                    <div class="section-title">Controle Financeiro 💸</div>
-                </div>
-                <div class="card-box">
-                    <div class="card-header-flex">
-                        <span class="card-title-text">Meta Diária</span>
-                        <span class="card-tag">No Alvo</span>
+            <div>
+                <div class="section-title">Hábitos & Metas de Hoje</div>
+                <div class="habit-list">
+                    <!-- Hábito Concluído (Filtro de opacidade e vinho opaco, sem risco) -->
+                    <div class="habit-card checked">
+                        <div class="habit-info">
+                            <span class="habit-icon">⚡</span>
+                            <span class="habit-name">Treino Pesado (Membros Superiores)</span>
+                        </div>
+                        <div class="custom-checkbox">✓</div>
                     </div>
-                    <div class="card-body-text">
-                        Gasto acumulado hoje: <strong>R$ 45,00</strong><br>
-                        Limite diário estabelecido: R$ 80,00
-                    </div>
-                </div>
-            </div>
 
-            <!-- ABA 4: MURAL -->
-            <div class="tab-pane" id="tab-mural">
-                <div class="section-header">
-                    <div class="section-title">Mural da Matilha 💬</div>
-                </div>
-                <div class="card-box">
-                    <div class="card-header-flex">
-                        <span class="card-title-text">Vinicius</span>
-                        <span style="font-size: 10px; color: rgba(233,233,233,0.4)">Hoje às 14:10</span>
+                    <!-- Hábito Pendente -->
+                    <div class="habit-card">
+                        <div class="habit-info">
+                            <span class="habit-icon">💧</span>
+                            <span class="habit-name">Dieta 100% Limpa</span>
+                        </div>
+                        <div class="custom-checkbox"></div>
                     </div>
-                    <div class="card-body-text">
-                        Treino de peito pago com sucesso! Progressão de carga confirmada. Segue o plano da matilha! 🦍🔥
-                    </div>
-                </div>
-            </div>
 
-            <!-- ABA 5: CADASTRO -->
-            <div class="tab-pane" id="tab-cadastro">
-                <div class="section-header">
-                    <div class="section-title">Novo Registro 📝</div>
-                </div>
-                <div class="card-box">
-                    <div class="form-group">
-                        <label class="form-label">Tipo de Lançamento</label>
-                        <select class="form-input">
-                            <option>Treino / Exercício</option>
-                            <option>Gasto Financeiro</option>
-                            <option>Post no Mural</option>
-                        </select>
+                    <!-- Hábito Pendente -->
+                    <div class="habit-card">
+                        <div class="habit-info">
+                            <span class="habit-icon">🎯</span>
+                            <span class="habit-name">Foco nos Objetivos & Metas</span>
+                        </div>
+                        <div class="custom-checkbox"></div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Descrição / Detalhes</label>
-                        <input type="text" class="form-input" placeholder="Ex: Supino, Almoço, Meta...">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Valor / Carga (Opcional)</label>
-                        <input type="text" class="form-input" placeholder="Ex: R$ 35,00 ou 40kg">
-                    </div>
-                    <button class="btn-action" style="margin-top: 6px; width: 100%; text-align: center;" onclick="alert('Salvo com sucesso na matilha!')">Salvar Registro 🦍</button>
                 </div>
             </div>
 
         </div>
 
-        <!-- TAB BAR INFERIOR (5 ABAS) -->
         <div class="tab-bar">
-            <button class="tab-item active" onclick="switchTab('hoje', this)">
-                <span class="icon">🏠</span>
+            <div class="tab-item active">
+                <span class="icon">⚡</span>
                 <span>Hoje</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('treinos', this)">
+            </div>
+            <div class="tab-item">
                 <span class="icon">💪</span>
                 <span>Treinos</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('gastos', this)">
+            </div>
+            <div class="tab-item">
                 <span class="icon">💸</span>
                 <span>Gastos</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('mural', this)">
+            </div>
+            <div class="tab-item">
                 <span class="icon">💬</span>
                 <span>Mural</span>
-            </button>
-            <button class="tab-item" onclick="switchTab('cadastro', this)">
-                <span class="icon">➕</span>
-                <span>Cadastro</span>
-            </button>
-        </div>
-
-        <!-- Modal de Resultado do Treino -->
-        <div class="modal-overlay" id="aiModal">
-            <div class="modal-card">
-                <div class="modal-header">
-                    <span class="modal-title">GOLIRA | Treino Concluído</span>
-                    <button class="modal-close" onclick="closeModal()">✕</button>
-                </div>
-                <div class="modal-body">
-                    <div class="ai-badge-tag">
-                        🦍 <strong>Matilha Atenta:</strong> Sincronização de carga registrada e som de vitória executado com sucesso!
-                    </div>
-                    <p>Continue firme na rotina e mantenha a hidratação em dia. Segue o plano!</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-action" onclick="closeModal()">Fechar</button>
-                </div>
+            </div>
+            <div class="tab-item">
+                <span class="icon">🤖</span>
+                <span>IA</span>
             </div>
         </div>
     </div>
 
-    <!-- Elemento de Áudio com o Base64 original -->
-    <audio id="monkeyAudio" preload="auto">
-        <source src="data:audio/mpeg;base64,//vQZAAP8AAAAAAAAAgAAA0gAAABACgCAASAACAAADSAAAAEAZMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU8Uyw9Q2w9g//70mQED/kzNgADvfDwAAANIAAAAQBIAgANAAAgAAA0gAAABBQ4OZw1yJQyZX841sU8p4891rU+ijo2CLQyfZU5Tu09d6E+z5U9FsM4XOUyvDA31gE6/6M+f5E9Vvc55dEzZNY0yi48E6gz+DaDRxO5M0Mqcx0QszDcICMxQ8A0UkwDScR0NIJAQzVCIDFXEIMno941CFYDRyJUMOkTU0zi3DAtZENEJCwz2gIjN4FLMfQxow3glAECSYDoIZhJhpmFOCAZghKBkXpxmQUAQYBAHrQjAHEBMRQIwxNQyzCZAgMlcK0x+B3jEcF3McsfUxrRRzArA9EgM1jDIOph5D5mPaDYYOIQpgFgNp4PNFaYkAmBw6fMFnri/XKexP2n1GQFjBeCIMHACZOdrD/xTCKsGRNhRhdkYmeCm6atq1ZrCoZnL5JMQU1FMy4xMDCqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//vSZAAP8AsAgAGAAAgAAA0gAAABAAAAAAAAACAAADSAAAAEAqmIKaimZcYmBhVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+9JkAA/wAAAAAAAACAAADSAAAAEAAAAAAAAAIAAANIAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/70mQAD/AAAAAAAAAIAAANIAAAAQAAAAAAAAAgAAA0gAAABExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//vSZAAP8AAAAAAAAAgAAA0gAAABAAAAAAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+9JkAA/wAAAAAAAACAAADSAAAAEAAAAAAAAAIAAANIAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/70mQAD/AAAAAAAAAIAAANIAAAAQAAAAAAAAAgAAA0gAAABExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//vSZAAP8AAAAAAAAAgAAA0gAAABAAAAAAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+9JkAA/wAAAAAAAACAAADSAAAAEAAAAAAAAAIAAAAAAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/70mQAD/AAAAAAAAAIAAANIAAAAQAAAAAAAAAgAAA0gAAABExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//vSZAAP8AAAAAAAAAgAAA0gAAABAAAAAAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV==">
-    </audio>
-
-    <script>
-        // Função de Navegação entre as 5 Abas
-        function switchTab(tabId, element) {
-            const panes = document.querySelectorAll('.tab-pane');
-            panes.forEach(pane => pane.classList.remove('active'));
-
-            const items = document.querySelectorAll('.tab-item');
-            items.forEach(item => item.classList.remove('active'));
-
-            document.getElementById('tab-' + tabId).classList.add('active');
-            element.classList.add('active');
-        }
-
-        function finishWorkout() {
-            const sound = document.getElementById('monkeyAudio');
-            if (sound) {
-                sound.currentTime = 0;
-                sound.play().catch(err => {
-                    console.log("Reprodução bloqueada:", err);
-                });
-            }
-
-            triggerConfetti();
-            document.getElementById('aiModal').classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('aiModal').classList.remove('show');
-        }
-
-        function triggerConfetti() {
-            const container = document.getElementById('appContainer');
-            const colors = ['#ECD3B5', '#58111A', '#E9E9E9', '#A3333D'];
-            
-            for (let i = 0; i < 40; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.setProperty('--startX', `${Math.random() * 350}px`);
-                confetti.style.setProperty('--endX', `${(Math.random() - 0.5) * 300}px`);
-                confetti.style.animationDuration = `${1.2 + Math.random() * 1.2}s`;
-                confetti.style.animationDelay = `${Math.random() * 0.3}s`;
-                
-                container.appendChild(confetti);
-
-                setTimeout(() => {
-                    confetti.remove();
-                }, 2500);
-            }
-        }
-    </script>
 </body>
 </html>
