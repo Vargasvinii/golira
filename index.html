@@ -137,18 +137,25 @@
             transition: width 0.3s ease;
         }
 
+        /* Container para os dois botões de água lado a lado */
+        .water-buttons-grid {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
         .btn-action {
             background: #58111A;
             border: 1px solid #ECD3B5;
             color: #ECD3B5;
-            padding: 10px 14px;
+            padding: 10px 10px;
             border-radius: 10px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
-            margin-top: 4px;
+            flex: 1;
         }
 
         .btn-action:hover {
@@ -156,7 +163,12 @@
             color: #000000;
         }
 
-        /* Input Customizado para o Hábito em Aberto */
+        .btn-full {
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        /* Inputs Customizados para o Hábito em Aberto */
         .custom-input {
             width: 100%;
             background: rgba(0, 0, 0, 0.6);
@@ -183,19 +195,22 @@
             <div class="user-badge">VINICIUS</div>
         </div>
 
-        <!-- Card de Hidratação (500ml por clique) -->
+        <!-- Card de Hidratação (Opções 300ml e 500ml) -->
         <div class="card-box active-day">
             <div class="card-header-flex">
                 <span class="card-title-text">Meta de Hidratação</span>
                 <span class="card-tag">Água</span>
             </div>
             <div class="card-body-content">
-                <div>💧 Consumido hoje: <strong id="hydrationText">0.0L / 3.0L</strong></div>
+                <div>💧 Consumido hoje: <strong id="hydrationText">0.0L / <span id="maxWaterTarget">3.0</span>L</strong></div>
                 <div class="progress-bar-container">
                     <div class="progress-bar-fill" id="hydrationBar" style="width: 0%;"></div>
                 </div>
             </div>
-            <button class="btn-action" onclick="addWater()">+ Registrar 500ml de Água 💧</button>
+            <div class="water-buttons-grid">
+                <button class="btn-action" onclick="addWater(0.3)">+ 300ml 💧</button>
+                <button class="btn-action" onclick="addWater(0.5)">+ 500ml 💧</button>
+            </div>
         </div>
 
         <!-- Card de Gasto Diário -->
@@ -206,23 +221,23 @@
             </div>
             <div class="card-body-content">
                 <div>💸 Gasto acumulado hoje: <strong id="expenseText">R$ 0,00</strong></div>
-                <div>🎯 Limite diário: R$ 80,00</div>
+                <div>🎯 Limite diário: R$ <span id="maxExpenseTarget">80,00</span></div>
             </div>
-            <button class="btn-action" onclick="addExpense()">+ Adicionar Gasto R$ 15,00</button>
+            <button class="btn-action btn-full" onclick="addExpense()">+ Adicionar Gasto R$ 15,00</button>
         </div>
 
-        <!-- Card Personalizado em Aberto (Ex: Cigarros ou outro hábito) -->
+        <!-- Card Personalizado em Aberto (Sem valores pré-definidos) -->
         <div class="card-box">
             <div class="card-header-flex">
                 <span class="card-title-text">Monitoramento Personalizado</span>
                 <span class="card-tag">Hábito Livre</span>
             </div>
             <div class="card-body-content">
-                <label style="font-size: 11px; color: rgba(236,211,181,0.8);">Nome do hábito (Ex: Cigarros, Café, Leitura):</label>
-                <input type="text" class="custom-input" id="customHabitName" placeholder="Ex: Cigarros consumidos hoje">
+                <label style="font-size: 11px; color: rgba(236,211,181,0.8);">Nome do hábito (Ex: Cigarros, Café):</label>
+                <input type="text" class="custom-input" id="customHabitName" placeholder="Definido na aba de configuração">
                 
-                <label style="font-size: 11px; color: rgba(236,211,181,0.8); margin-top: 6px;">Quantidade / Status:</label>
-                <input type="text" class="custom-input" id="customHabitValue" placeholder="Nenhum registro (em aberto)">
+                <label style="font-size: 11px; color: rgba(236,211,181,0.8); margin-top: 6px;">Registro de hoje:</label>
+                <input type="text" class="custom-input" id="customHabitValue" placeholder="">
             </div>
         </div>
 
@@ -239,12 +254,12 @@
     </div>
 
     <script>
-        // Lógica de Hidratação (Adiciona 500ml por clique)
+        // Lógica de Hidratação Flexível (300ml ou 500ml)
         let currentWater = 0.0;
-        const maxWater = 3.0;
+        let maxWater = 3.0; // Valor numérico obtido da aba de configuração
 
-        function addWater() {
-            currentWater = Math.min(maxWater, currentWater + 0.5);
+        function addWater(amount) {
+            currentWater = Math.min(maxWater, currentWater + amount);
             let percentage = (currentWater / maxWater) * 100;
             
             document.getElementById('hydrationText').innerText = `${currentWater.toFixed(1)}L / ${maxWater.toFixed(1)}L`;
@@ -255,7 +270,7 @@
             }
         }
 
-        // Lógica Simples de Exemplo para Gastos
+        // Lógica de Exemplo para Gastos
         let currentExpense = 0.0;
         function addExpense() {
             currentExpense += 15.0;
