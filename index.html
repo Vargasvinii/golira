@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GOLIRA</title>
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="GOLIRA: hábitos saudáveis e treino com o Gorilão, sua IA parceira.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GOLIRA">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Tela de carregamento -->
+  <div id="boot" class="center-screen">
+    <img class="boot-logo" src="/img/gorila.png" alt="GOLIRA">
+    <p id="bootText" class="muted">Carregando a matilha… 🦍</p>
+  </div>
+
+  <!-- Tela de login -->
+  <div id="login" class="center-screen hidden">
+    <h1 class="sr-only">GOLIRA</h1>
+    <img class="login-logo" src="/img/logo.png" alt="GOLIRA">
+    <p class="login-sub">Hábitos, treino e o Gorilão te cobrando todo dia.<br>Entre na matilha.</p>
+    <button id="googleBtn" class="btn-action btn-lg" type="button">Entrar com Google</button>
+    <p id="loginError" class="error"></p>
+  </div>
+
+  <!-- App -->
+  <div id="app" class="app-container hidden">
+    <div class="watermark" aria-hidden="true"></div>
+    <header class="app-header">
+      <img class="brand-logo" src="/img/logo-horizontal.png" alt="GOLIRA">
+      <button id="userBadge" class="user-badge" type="button" aria-label="Abrir configurações">…</button>
+    </header>
+
+    <main id="view" class="app-content"></main>
+
+    <nav class="tab-bar" id="tabBar"></nav>
+  </div>
+
+  <div id="modalRoot"></div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
