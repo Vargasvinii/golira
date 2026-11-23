@@ -5,12 +5,29 @@
   // Estado e utilidades
   // ------------------------------------------------------------------
   const TABS = [
-    { id: 'hoje', icon: '📍', label: 'Hoje' },
-    { id: 'treino', icon: '💪', label: 'Treino' },
-    { id: 'historico', icon: '📊', label: 'Histórico' },
-    { id: 'mural', icon: '💬', label: 'Mural' },
-    { id: 'ia', icon: '🤖', label: 'IA' },
+    { id: 'hoje', icon: 'hoje', label: 'Hoje' },
+    { id: 'treino', icon: 'treino', label: 'Treino' },
+    { id: 'historico', icon: 'historico', label: 'Histórico' },
+    { id: 'mural', icon: 'mural', label: 'Mural' },
+    { id: 'ia', icon: 'ia', label: 'IA' },
   ];
+
+  // Ícones de traço (todos no mesmo tom, herdam a cor do texto)
+  const ICONS = {
+    hoje: '<rect x="3.5" y="5" width="17" height="15.5" rx="3.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15.2l2 2 4-4.2"/>',
+    treino: '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>',
+    historico: '<path d="M5 20v-8M12 20V5M19 20v-5"/>',
+    mural: '<path d="M20.5 12a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1.2-4.3A8.5 8.5 0 1 1 20.5 12z"/>',
+    ia: '<path d="M12 3.5l1.9 5.6 5.6 1.9-5.6 1.9L12 18.5l-1.9-5.6-5.6-1.9 5.6-1.9z"/><path d="M19 3.5v3M17.5 5h3"/>',
+    drop: '<path d="M12 3.2s6.3 6.3 6.3 10.7a6.3 6.3 0 0 1-12.6 0C5.7 9.5 12 3.2 12 3.2z"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    play: '<path d="M8 5.5v13l11-6.5z"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    edit: '<path d="M4 20h4L19.5 8.5l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/>',
+  };
+  function icon(name, cls) {
+    return '<svg class="ic' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name] || '') + '</svg>';
+  }
 
   let sb = null;          // cliente do Supabase
   let session = null;     // sessão do usuário logado
@@ -19,6 +36,7 @@
   let route = 'hoje';
   let water = { logs: [], total: 0 };
   let hojeExtra = '';     // HTML extra da aba Hoje (cartão do treino)
+  let hojeFirst = true;   // primeira montagem da aba Hoje (anima só ela)
 
   const $ = (sel, root) => (root || document).querySelector(sel);
 
@@ -59,7 +77,7 @@
   }
 
   function confetti() {
-    const colors = ['#ECD3B5', '#58111A', '#E9E9E9', '#A3333D'];
+    const colors = ['#ECD3B5', '#D12B45', '#E9E9E9', '#2FBF71', '#5AB8F0'];
     for (let i = 0; i < 40; i++) {
       const c = document.createElement('div');
       c.className = 'confetti';
@@ -73,6 +91,18 @@
     }
   }
 
+  let enterTimer = null;
+  G.enter = function () {
+    const v = $('#view');
+    if (!v) return;
+    clearTimeout(enterTimer);
+    v.classList.remove('no-anim', 'route-enter');
+    void v.offsetWidth;
+    v.classList.add('route-enter');
+    enterTimer = setTimeout(() => v.classList.remove('route-enter'), 1000);
+  };
+  G.icon = icon;
+  G.icon = icon;
   G.esc = esc;
   G.toast = toast;
   G.confetti = confetti;
@@ -176,9 +206,9 @@
   // Navegação
   // ------------------------------------------------------------------
   function buildTabBar() {
-    $('#tabBar').innerHTML = TABS.map((t) => (
-      '<button class="tab-item" type="button" data-route="' + t.id + '">' +
-      '<span class="icon">' + t.icon + '</span><span>' + t.label + '</span></button>'
+    $('#tabBar').innerHTML = '<span class="tab-pill" aria-hidden="true"></span>' + TABS.map((t) => (
+      '<button class="tab-item" type="button" data-route="' + t.id + '" aria-label="' + t.label + '">' +
+      icon(t.icon) + '<span>' + t.label + '</span></button>'
     )).join('');
     $('#tabBar').addEventListener('click', (e) => {
       const btn = e.target.closest('.tab-item');
@@ -190,7 +220,9 @@
     const id = (window.location.hash || '#hoje').slice(1);
     route = TABS.some((t) => t.id === id) ? id : 'hoje';
     document.querySelectorAll('.tab-item').forEach((b) => b.classList.toggle('active', b.dataset.route === route));
+    $('#tabBar').style.setProperty('--i', Math.max(0, TABS.findIndex((t) => t.id === route)));
     window.scrollTo(0, 0);
+    G.enter();
     if (G.cleanup) { G.cleanup(); G.cleanup = null; }
     if (!profile) return;
     if (route === 'hoje') renderHoje();
@@ -221,6 +253,7 @@
     water.logs = data || [];
     water.total = water.logs.reduce((s, l) => s + l.amount_ml, 0);
     hojeExtra = '';
+    hojeFirst = true;
     drawHoje();
     // Cartão do treino de hoje (vem do treino.js; falha em silêncio se não houver)
     if (G.hojeCard) {
@@ -237,19 +270,23 @@
     const pct = Math.min(100, Math.round((water.total / goal) * 100));
     const done = water.total >= goal;
 
+    // só a primeira montagem anima; atualizações (água, cartão do treino) não piscam
+    $('#view').classList.toggle('no-anim', !hojeFirst);
+    hojeFirst = false;
+
     $('#view').innerHTML =
-      '<div class="greeting">Fala, ' + esc(profile.display_name) + '! 🦍</div>' +
+      '<div class="greeting">Fala, ' + esc(profile.display_name) + '!</div>' +
 
       '<div class="card-box highlight">' +
         '<div class="card-header-flex"><span class="card-title-text">Meta de Hidratação</span><span class="card-tag">Água</span></div>' +
         '<div class="card-body">' +
-          '<div>💧 Consumido hoje: <strong>' + fmtLitros(water.total) + 'L / ' + fmtLitros(goal) + 'L</strong> (' + pct + '%)</div>' +
+          '<div><span class="drop">' + icon('drop') + '</span> Consumido hoje: <strong>' + fmtLitros(water.total) + 'L / ' + fmtLitros(goal) + 'L</strong> (' + pct + '%)</div>' +
           '<div class="progress-bar"><div class="progress-fill' + (done ? ' done' : '') + '" style="width:' + pct + '%"></div></div>' +
-          (done ? '<div>✅ Meta batida! Bora manter a matilha hidratada.</div>' : '') +
+          (done ? '<div class="ok-line">' + icon('check') + ' Meta batida! Bora manter a matilha hidratada.</div>' : '') +
         '</div>' +
         '<div class="water-buttons">' +
-          '<button class="btn-action" type="button" data-ml="300">+ 300ml 💧</button>' +
-          '<button class="btn-action" type="button" data-ml="500">+ 500ml 💧</button>' +
+          '<button class="btn-action btn-agua" type="button" data-ml="300">' + icon('drop') + ' + 300ml</button>' +
+          '<button class="btn-action btn-agua" type="button" data-ml="500">' + icon('drop') + ' + 500ml</button>' +
         '</div>' +
         (water.logs.length ? '<button class="btn-link" type="button" id="undoWater">Desfazer último (' + water.logs[0].amount_ml + 'ml)</button>' : '') +
       '</div>' +
@@ -258,7 +295,7 @@
 
       '<div class="card-box">' +
         '<div class="card-header-flex"><span class="card-title-text">Foco da Matilha</span><span class="card-tag">Prioridade</span></div>' +
-        '<div class="card-body"><p>Mantenha o foco nos treinos, siga o plano e registre seus hábitos com precisão para fechar o dia no verde! 🔥</p></div>' +
+        '<div class="card-body"><p>Mantenha o foco nos treinos, siga o plano e registre seus hábitos com precisão para fechar o dia no verde!</p></div>' +
       '</div>';
 
     document.querySelectorAll('[data-ml]').forEach((b) => b.addEventListener('click', () => addWater(Number(b.dataset.ml), b)));
@@ -343,7 +380,7 @@
   function openSettings(forced) {
     $('#modalRoot').innerHTML =
       '<div class="modal-overlay"><form class="modal-card" id="settingsForm" novalidate>' +
-        '<div class="modal-header"><span class="modal-title">' + (forced ? 'Bem-vindo à matilha 🦍' : 'Cadastro e configurações') + '</span>' +
+        '<div class="modal-header"><span class="modal-title">' + (forced ? 'Bem-vindo à matilha' : 'Cadastro e configurações') + '</span>' +
         (forced ? '' : '<button class="modal-close" type="button" id="closeSettings" aria-label="Fechar">✕</button>') + '</div>' +
         (forced ? '<p class="muted">Preencha seus dados para o app calcular seu IMC e sua meta de água.</p>' : '') +
         '<label class="field">Seu nome<input name="display_name" maxlength="20" autocomplete="given-name"></label>' +

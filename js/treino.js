@@ -10,6 +10,7 @@
   const toast = G.toast;
   const confetti = G.confetti;
   const pad = G.pad2;
+  const ic = G.icon;
   const $ = (sel, root) => (root || document).querySelector(sel);
 
   const DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -32,6 +33,7 @@
     fin: null,        // dados da tela de treino concluído
   };
   let tickTimer = null;
+  let lastView = null;
 
   // ------------------------------------------------------------------
   // Utilidades
@@ -139,6 +141,7 @@
     if (G.route !== 'treino') return;
     const view = $('#view');
     stopTick();
+    if (S.view !== lastView) { lastView = S.view; if (G.enter) G.enter(); }
     if (S.missing) view.innerHTML = missingHtml();
     else if (S.view === 'editor' && S.ed) view.innerHTML = editorHtml();
     else if (S.view === 'run' && S.active) { view.innerHTML = runHtml(); startTick(); }
@@ -167,7 +170,7 @@
     return '<div class="card-box highlight">' +
       '<div class="card-header-flex"><span class="card-title-text">Sua ficha de treino</span><span class="card-tag">Treino</span></div>' +
       '<div class="card-body"><p>Você ainda não tem ficha. Monte a sua com treinos A, B, C…, exercícios ou aparelhos, séries, tempo e carga. Em breve o Gorilão também vai montar uma pra você.</p></div>' +
-      '<button class="btn-action btn-lg" type="button" data-t="new-plan">+ Criar minha ficha</button>' +
+      '<button class="btn-action btn-lg" type="button" data-t="new-plan">' + ic('plus') + ' Criar minha ficha</button>' +
       '</div>';
   }
 
@@ -183,8 +186,8 @@
           '</select></label>'
         : '') +
       '<div class="row-btns">' +
-        '<button class="btn-action" type="button" data-t="edit-plan">✏️ Editar ficha</button>' +
-        '<button class="btn-action" type="button" data-t="new-plan">+ Nova ficha</button>' +
+        '<button class="btn-action" type="button" data-t="edit-plan">' + ic('edit') + ' Editar ficha</button>' +
+        '<button class="btn-action" type="button" data-t="new-plan">' + ic('plus') + ' Nova ficha</button>' +
       '</div></div>';
 
     planDays(plan.id).forEach((d) => {
@@ -198,7 +201,7 @@
         (exs.length
           ? '<ul class="ex-preview">' + exs.map((x) => '<li><span>' + esc(x.name) + '</span><span class="ex-meta">' + esc(describe(x)) + '</span></li>').join('') + '</ul>'
           : '<p class="muted">Sem exercícios ainda. Toque em Editar ficha.</p>') +
-        '<button class="btn-action btn-lg" type="button" data-t="start" data-day="' + d.id + '"' + (exs.length ? '' : ' disabled') + '>▶ Iniciar treino</button>' +
+        '<button class="btn-action btn-lg" type="button" data-t="start" data-day="' + d.id + '"' + (exs.length ? '' : ' disabled') + '>' + ic('play', 'fill') + ' Iniciar treino</button>' +
         '</div>';
     });
 
@@ -299,7 +302,7 @@
     h += '<button class="btn-ghost" type="button" data-t="day-add">+ Adicionar treino</button>' +
       '<div class="error" id="edError"></div>' +
       '<div class="row-btns"><button class="btn-ghost" type="button" data-t="ed-cancel">Cancelar</button>' +
-      '<button class="btn-action" type="button" data-t="ed-save" id="edSave">💾 Salvar ficha</button></div>' +
+      '<button class="btn-action" type="button" data-t="ed-save" id="edSave">Salvar ficha</button></div>' +
       (!ed.isNew ? '<button class="btn-link danger" type="button" data-t="plan-del">Apagar esta ficha</button>' : '');
     return h;
   }
@@ -382,7 +385,7 @@
     S.planId = ed.id;
     S.ed = null;
     S.view = 'home';
-    toast('Ficha salva! 💪');
+    toast('Ficha salva!');
     const e2 = await loadAll();
     if (e2) return toast('Salvei, mas não consegui recarregar: ' + e2.message);
     render();
@@ -422,7 +425,7 @@
       const root = $('#modalRoot');
       root.innerHTML =
         '<div class="modal-overlay"><form class="modal-card" id="pesoForm" novalidate>' +
-          '<div class="modal-header"><span class="modal-title">Peso da semana ⚖️</span></div>' +
+          '<div class="modal-header"><span class="modal-title">Peso da semana</span></div>' +
           '<p class="muted">Se a academia tiver balança, que tal registrar seu peso antes do treino? Assim a gente compara com as semanas anteriores.</p>' +
           (last ? '<p class="muted">Último registro: <strong>' + fmtKg(last.weight_kg) + ' kg</strong> em ' + esc(last.logged_on.slice(8, 10) + '/' + last.logged_on.slice(5, 7)) + '</p>' : '') +
           '<label class="field">Peso hoje (kg)<input name="peso" inputmode="decimal" autocomplete="off" placeholder="Ex.: 82,5">' +
@@ -511,7 +514,7 @@
   function itemHtml(it, i) {
     const target = it.kind === 'time' ? it.duration_min + ' min' : it.sets + 'x' + it.reps;
     return '<div class="card-box ex-card' + (it.done ? ' done' : '') + '" data-card="' + i + '">' +
-      '<button class="check" type="button" data-t="check" data-i="' + i + '" aria-label="Marcar como feito">' + (it.done ? '✓' : '') + '</button>' +
+      '<button class="check" type="button" data-t="check" data-i="' + i + '" aria-label="Marcar como feito">' + (it.done ? ic('check') : '') + '</button>' +
       '<div class="ex-main"><div class="ex-name">' + esc(it.name) + '</div><div class="ex-target">' + esc(target) + '</div></div>' +
       (it.kind === 'time' ? '' :
         '<label class="load-box">Carga<span><input data-load="' + i + '" inputmode="decimal" placeholder="—" value="' +
@@ -540,7 +543,7 @@
     if (card) {
       card.classList.toggle('done', !!it.done);
       const ck = card.querySelector('.check');
-      if (ck) ck.textContent = it.done ? '✓' : '';
+      if (ck) ck.innerHTML = it.done ? ic('check') : '';
     }
     const c = $('#runCount');
     if (c) c.textContent = S.active.items.filter((x) => x.done).length + '/' + S.active.items.length;
@@ -661,7 +664,7 @@
     const f = S.fin;
     if (f.step === 'ask') {
       return '<div class="card-box highlight center">' +
-        '<div class="big">🦍🎉</div><div class="card-title-text">Treino concluído!</div>' +
+        '<img class="fin-gorila" src="/img/gorila.png" alt=""><div class="card-title-text">Treino concluído!</div>' +
         '<div class="stats"><div><strong>' + fmtClock(f.durationMs) + '</strong><span>tempo</span></div>' +
         '<div><strong>' + f.done + '/' + f.total + '</strong><span>exercícios</span></div></div></div>' +
         '<div class="card-box"><div class="card-title-text">Como foi o treino?</div><div class="diff-grid">' +
@@ -802,7 +805,7 @@
       if (ex) ex.load_kg = c.to;
     });
     f.changesState = 'done';
-    toast('Ficha atualizada! 💪');
+    toast('Ficha atualizada!');
     rerender();
   }
 
@@ -922,13 +925,13 @@
       (btn ? '<a class="btn-action link" href="#treino">' + btn + '</a>' : '') + '</div>';
 
     const open = (r[0].data || [])[0];
-    if (open) return card('Treino em andamento', '<strong>' + esc(open.day_title) + '</strong> está rolando. Bora terminar! 💪', 'Continuar treino');
+    if (open) return card('Treino em andamento', '<strong>' + esc(open.day_title) + '</strong> está rolando. Bora terminar!', 'Continuar treino');
     const doneToday = (r[1].data || [])[0];
-    if (doneToday) return card('Treino de hoje concluído ✅', '<strong>' + esc(doneToday.day_title) + '</strong> feito. A matilha agradece! 🦍', '');
+    if (doneToday) return card('Treino de hoje concluído', '<strong>' + esc(doneToday.day_title) + '</strong> feito. A matilha agradece! 🦍', '');
     const act = (r[2].data || []).find((x) => x.is_active);
     if (!act) return '';
     const day = (r[3].data || []).find((x) => x.plan_id === act.id && x.weekday === new Date().getDay());
     if (!day) return '';
-    return card('Treino de hoje', '<strong>' + esc(day.title) + '</strong> está na sua agenda de hoje. Bora? 💪', 'Ir para o Treino');
+    return card('Treino de hoje', '<strong>' + esc(day.title) + '</strong> está na sua agenda de hoje. Bora?', 'Ir para o Treino');
   };
 })();
