@@ -18,8 +18,26 @@
   let groupTag = '';      // tag do grupo (texto)
   let route = 'hoje';
   let water = { logs: [], total: 0 };
+  let hojeExtra = '';     // HTML extra da aba Hoje (cartão do treino)
 
   const $ = (sel, root) => (root || document).querySelector(sel);
+
+  // Ponte com os outros arquivos (ex.: treino.js). Eles se registram em G.routes.
+  const G = window.GOLIRA = {
+    routes: {},
+    cleanup: null,
+    get sb() { return sb; },
+    get session() { return session; },
+    get profile() { return profile; },
+    get route() { return route; },
+  };
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  // Data local no formato 2026-11-18
+  function hojeISO(d) {
+    d = d || new Date();
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  }
 
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, (c) => (
@@ -54,6 +72,12 @@
       setTimeout(() => c.remove(), 3000);
     }
   }
+
+  G.esc = esc;
+  G.toast = toast;
+  G.confetti = confetti;
+  G.hojeISO = hojeISO;
+  G.pad2 = pad2;
 
   function showScreen(name) {
     ['boot', 'login', 'app'].forEach((id) => $('#' + id).classList.toggle('hidden', id !== name));
@@ -167,8 +191,10 @@
     route = TABS.some((t) => t.id === id) ? id : 'hoje';
     document.querySelectorAll('.tab-item').forEach((b) => b.classList.toggle('active', b.dataset.route === route));
     window.scrollTo(0, 0);
+    if (G.cleanup) { G.cleanup(); G.cleanup = null; }
     if (!profile) return;
     if (route === 'hoje') renderHoje();
+    else if (G.routes[route]) G.routes[route]();
     else renderEmBreve(route);
   }
 
@@ -194,7 +220,15 @@
     }
     water.logs = data || [];
     water.total = water.logs.reduce((s, l) => s + l.amount_ml, 0);
+    hojeExtra = '';
     drawHoje();
+    // Cartão do treino de hoje (vem do treino.js; falha em silêncio se não houver)
+    if (G.hojeCard) {
+      G.hojeCard().then((html) => {
+        hojeExtra = html || '';
+        if (route === 'hoje' && hojeExtra) drawHoje();
+      }).catch(() => {});
+    }
   }
 
   function drawHoje() {
@@ -219,6 +253,8 @@
         '</div>' +
         (water.logs.length ? '<button class="btn-link" type="button" id="undoWater">Desfazer último (' + water.logs[0].amount_ml + 'ml)</button>' : '') +
       '</div>' +
+
+      hojeExtra +
 
       '<div class="card-box">' +
         '<div class="card-header-flex"><span class="card-title-text">Foco da Matilha</span><span class="card-tag">Prioridade</span></div>' +
@@ -265,11 +301,6 @@
   // Abas ainda em construção
   // ------------------------------------------------------------------
   const EM_BREVE = {
-    treino: {
-      title: 'Treino', tag: 'Em breve',
-      text: 'Aqui você vai criar e salvar suas fichas de treino. O Gorilão também vai poder montar fichas para você, e elas só são salvas depois que você aprovar.',
-      itens: ['Fichas com dias e exercícios', 'Ficha ativa aparece na aba Hoje', 'Finalizar treino com som e confete 🦍'],
-    },
     historico: {
       title: 'Histórico', tag: 'Em breve',
       text: 'Sua evolução calculada com os seus registros de verdade.',
@@ -380,6 +411,16 @@
         btn.disabled = false;
         return (err.textContent = 'Erro ao entrar no grupo: ' + g.error.message);
       }
+    }
+
+    // Guarda o peso no histórico (um registro por dia). Falha em silêncio se a tabela ainda não existe.
+    if (weight !== profile.weight_kg) {
+      try {
+        await sb.from('weight_logs').upsert(
+          { weight_kg: Math.round(weight * 10) / 10, logged_on: hojeISO() },
+          { onConflict: 'user_id,logged_on' }
+        );
+      } catch (e) { /* ignora */ }
     }
 
     await loadProfile();
