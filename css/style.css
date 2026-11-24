@@ -348,3 +348,50 @@ svg.ic.fill { fill: currentColor; stroke: none; }
 .stats span { font-size: 11px; color: rgba(233, 233, 233, 0.6); }
 .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
 .diff-grid .btn-action { text-transform: uppercase; letter-spacing: 0.6px; padding: 16px 10px; font-size: 12px; }
+
+/* ---------- v3: Garrafinha e Hábitos ---------- */
+.water-row { display: flex; align-items: center; gap: 18px; }
+.water-side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.water-big strong { font-size: 30px; font-weight: 800; color: #fff; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
+.water-big span { font-size: 15px; color: rgba(233, 233, 233, 0.55); font-weight: 600; }
+
+.bottle { width: 92px; height: auto; flex: none; overflow: visible; filter: drop-shadow(0 0 12px rgba(90, 184, 240, 0.35)); transition: filter 0.6s; }
+.bottle.done { filter: drop-shadow(0 0 14px rgba(47, 191, 113, 0.55)); }
+.bottle .bw { transition: transform 1.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.bottle .wave { animation: wave 3.4s linear infinite; }
+.bottle .wave.w2 { animation-duration: 5.2s; animation-direction: reverse; }
+@keyframes wave { from { transform: translateX(0); } to { transform: translateX(50px); } }
+.bottle .bub { fill: rgba(255, 255, 255, 0.55); animation: bubble 4.2s ease-in infinite; }
+.bottle .b2 { animation-duration: 5.4s; animation-delay: 0.8s; }
+.bottle .b3 { animation-duration: 3.8s; animation-delay: 1.6s; }
+.bottle .b4 { animation-duration: 6s; animation-delay: 2.4s; }
+.bottle .b5 { animation-duration: 4.8s; animation-delay: 3.1s; }
+@keyframes bubble { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 0.85; } 100% { transform: translateY(-105px); opacity: 0; } }
+
+.habs { display: flex; flex-direction: column; gap: 16px; }
+.habit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.card-box.habit { align-items: flex-start; padding: 16px; gap: 6px; }
+.card-box.habit.ok { border-color: rgba(47, 191, 113, 0.6); background: linear-gradient(150deg, rgba(47, 191, 113, 0.14), rgba(14, 14, 16, 0.9) 70%); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45), 0 0 22px rgba(47, 191, 113, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.card-box.habit.bad { border-color: rgba(255, 138, 155, 0.55); background: linear-gradient(150deg, rgba(255, 138, 155, 0.1), rgba(14, 14, 16, 0.9) 70%); }
+.habit-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 2px; }
+.habit-ico svg { width: 20px; height: 20px; stroke-width: 2.6; }
+.habit.ok .habit-ico { background: linear-gradient(180deg, #46DB8B, var(--esm)); color: #04150C; box-shadow: 0 0 14px rgba(47, 191, 113, 0.5); animation: pop 0.45s var(--spring); }
+.habit.bad .habit-ico { background: rgba(255, 138, 155, 0.18); color: #FF8A9B; border: 1px solid rgba(255, 138, 155, 0.5); }
+.habit-ico.idle { background: rgba(255, 255, 255, 0.06); color: var(--areia); border: 1px solid var(--edge-hi); }
+.habit-title { font-size: 14px; font-weight: 800; color: var(--areia); }
+.habit-sub { font-size: 12px; color: rgba(233, 233, 233, 0.65); line-height: 1.4; margin-bottom: 6px; }
+.habit .btn-ghost { align-self: stretch; margin-top: auto; padding: 10px 8px; font-size: 12px; }
+
+.lungs { width: 96px; height: auto; flex: none; }
+.lungs .lg { transform-box: fill-box; transform-origin: 50% 55%; transform: scale(var(--ls, 1)); transition: transform 0.9s var(--ease-out); }
+.lungs .lobe { fill: var(--lung); stroke: rgba(255, 255, 255, 0.25); stroke-width: 1.5; transition: fill 0.9s; filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4)); }
+.lungs .trq { fill: none; stroke: rgba(236, 211, 181, 0.8); stroke-width: 4; stroke-linecap: round; }
+
+.check-line { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--texto); line-height: 1.4; cursor: pointer; }
+.check-line input { width: 20px; height: 20px; accent-color: var(--neon); flex: none; margin-top: 1px; }
+.check-line em { color: rgba(233, 233, 233, 0.55); font-style: normal; font-size: 11px; }
+.opt-box { display: flex; flex-direction: column; gap: 10px; padding: 12px; border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 16px; }
+.btn-link.inline { display: inline; font-size: inherit; }
+#waterHint { line-height: 1.5; }
+.ok-line { font-size: 13px; line-height: 1.4; align-items: flex-start; }
+.ok-line svg { margin-top: 1px; }
