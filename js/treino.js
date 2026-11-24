@@ -927,7 +927,7 @@
     const open = (r[0].data || [])[0];
     if (open) return card('Treino em andamento', '<strong>' + esc(open.day_title) + '</strong> está rolando. Bora terminar!', 'Continuar treino');
     const doneToday = (r[1].data || [])[0];
-    if (doneToday) return card('Treino de hoje concluído', '<strong>' + esc(doneToday.day_title) + '</strong> feito. A matilha agradece! 🦍', '');
+    if (doneToday) return ''; // o card de Hábitos já mostra "Treino feito"
     const act = (r[2].data || []).find((x) => x.is_active);
     if (!act) return '';
     const day = (r[3].data || []).find((x) => x.plan_id === act.id && x.weekday === new Date().getDay());

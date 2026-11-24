@@ -23,6 +23,7 @@
     check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
     play: '<path d="M8 5.5v13l11-6.5z"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
+    x: '<path d="M6 6l12 12M18 6L6 18"/>',
     edit: '<path d="M4 20h4L19.5 8.5l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/>',
   };
   function icon(name, cls) {
@@ -102,6 +103,7 @@
     enterTimer = setTimeout(() => v.classList.remove('route-enter'), 1000);
   };
   G.icon = icon;
+  G.redrawHoje = function () { drawHoje(); };
   G.icon = icon;
   G.esc = esc;
   G.toast = toast;
@@ -256,6 +258,9 @@
     hojeFirst = true;
     drawHoje();
     // Cartão do treino de hoje (vem do treino.js; falha em silêncio se não houver)
+    if (G.habitosLoad) {
+      G.habitosLoad().then(() => { if (route === 'hoje') drawHoje(); }).catch(() => {});
+    }
     if (G.hojeCard) {
       G.hojeCard().then((html) => {
         hojeExtra = html || '';
@@ -264,11 +269,45 @@
     }
   }
 
+  // ------------------------------------------------------------------
+  // Garrafinha de água (SVG com onda e bolhas)
+  // ------------------------------------------------------------------
+  function bottleY(p) { return Math.round((165 - 131 * Math.max(0, Math.min(100, p)) / 100) * 10) / 10; }
+
+  function bottleHtml(fromPct, toPct, done) {
+    const body = 'M38 28h24v10c0 6 18 10 18 24v86a14 14 0 0 1-14 14H34a14 14 0 0 1-14-14V62c0-14 18-18 18-24z';
+    const fill = done ? 'url(#bge)' : 'url(#bgw)';
+    return '<svg class="bottle' + (done ? ' done' : '') + '" viewBox="0 0 100 176" data-pct="' + toPct + '" role="img" aria-label="Garrafa com ' + toPct + '% da meta de água">' +
+      '<defs>' +
+        '<clipPath id="bclip"><path d="' + body + '"/></clipPath>' +
+        '<linearGradient id="bgw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8AD3FA"/><stop offset="1" stop-color="#2F7FC4"/></linearGradient>' +
+        '<linearGradient id="bge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5BE79B"/><stop offset="1" stop-color="#1F9A57"/></linearGradient>' +
+      '</defs>' +
+      '<g clip-path="url(#bclip)">' +
+        '<rect width="100" height="176" fill="rgba(255,255,255,0.05)"/>' +
+        '<g class="bw" style="transform:translateY(' + bottleY(fromPct) + 'px)">' +
+          '<path class="wave w2" d="M-62 2q12.5-5 25 0t25 0 25 0 25 0 25 0 25 0 25 0 25 0 25 0 25 0V140H-62z" fill="' + fill + '" opacity="0.5"/>' +
+          '<path class="wave w1" d="M-50 0q12.5-5 25 0t25 0 25 0 25 0 25 0 25 0 25 0 25 0 25 0V140H-50z" fill="' + fill + '"/>' +
+          '<circle class="bub b1" cx="34" cy="120" r="2.4"/><circle class="bub b2" cx="52" cy="130" r="1.8"/>' +
+          '<circle class="bub b3" cx="66" cy="115" r="2.8"/><circle class="bub b4" cx="44" cy="125" r="1.5"/>' +
+          '<circle class="bub b5" cx="58" cy="135" r="2.1"/>' +
+        '</g>' +
+      '</g>' +
+      '<path d="' + body + '" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2.2" stroke-linejoin="round"/>' +
+      '<path d="M30 70v62" stroke="rgba(255,255,255,0.28)" stroke-width="3" stroke-linecap="round" fill="none"/>' +
+      '<rect x="40" y="16" width="20" height="12" rx="4" fill="rgba(236,211,181,0.85)"/>' +
+    '</svg>';
+  }
+
   function drawHoje() {
     if (route !== 'hoje') return;
     const goal = profile.water_goal_ml;
     const pct = Math.min(100, Math.round((water.total / goal) * 100));
     const done = water.total >= goal;
+
+    // nível anterior da garrafinha (para ela encher devagar em vez de pular)
+    const oldBottle = $('.bottle');
+    const prevPct = oldBottle ? Number(oldBottle.dataset.pct) || 0 : 0;
 
     // só a primeira montagem anima; atualizações (água, cartão do treino) não piscam
     $('#view').classList.toggle('no-anim', !hojeFirst);
@@ -279,24 +318,35 @@
 
       '<div class="card-box highlight">' +
         '<div class="card-header-flex"><span class="card-title-text">Meta de Hidratação</span><span class="card-tag">Água</span></div>' +
-        '<div class="card-body">' +
-          '<div><span class="drop">' + icon('drop') + '</span> Consumido hoje: <strong>' + fmtLitros(water.total) + 'L / ' + fmtLitros(goal) + 'L</strong> (' + pct + '%)</div>' +
-          '<div class="progress-bar"><div class="progress-fill' + (done ? ' done' : '') + '" style="width:' + pct + '%"></div></div>' +
-          (done ? '<div class="ok-line">' + icon('check') + ' Meta batida! Bora manter a matilha hidratada.</div>' : '') +
+        '<div class="water-row">' +
+          bottleHtml(prevPct, pct, done) +
+          '<div class="water-side">' +
+            '<div class="water-big"><strong>' + fmtLitros(water.total) + 'L</strong> <span>/ ' + fmtLitros(goal) + 'L</span></div>' +
+            '<div class="muted">' + pct + '% da meta de hoje</div>' +
+            (done ? '<div class="ok-line">' + icon('check') + ' Meta batida! Bora manter a matilha hidratada.</div>' : '') +
+            (water.logs.length ? '<button class="btn-link" type="button" id="undoWater">Desfazer último (' + water.logs[0].amount_ml + 'ml)</button>' : '') +
+          '</div>' +
         '</div>' +
         '<div class="water-buttons">' +
           '<button class="btn-action btn-agua" type="button" data-ml="300">' + icon('drop') + ' + 300ml</button>' +
           '<button class="btn-action btn-agua" type="button" data-ml="500">' + icon('drop') + ' + 500ml</button>' +
         '</div>' +
-        (water.logs.length ? '<button class="btn-link" type="button" id="undoWater">Desfazer último (' + water.logs[0].amount_ml + 'ml)</button>' : '') +
       '</div>' +
 
       hojeExtra +
+      (G.habitosHtml ? G.habitosHtml() : '') +
 
       '<div class="card-box">' +
         '<div class="card-header-flex"><span class="card-title-text">Foco da Matilha</span><span class="card-tag">Prioridade</span></div>' +
         '<div class="card-body"><p>Mantenha o foco nos treinos, siga o plano e registre seus hábitos com precisão para fechar o dia no verde!</p></div>' +
       '</div>';
+
+    const bw = $('.bw');
+    if (bw && prevPct !== pct) {
+      requestAnimationFrame(() => requestAnimationFrame(() => { bw.style.transform = 'translateY(' + bottleY(pct) + 'px)'; }));
+    }
+    const bt = $('.bottle');
+    if (bt) bt.dataset.pct = String(pct);
 
     document.querySelectorAll('[data-ml]').forEach((b) => b.addEventListener('click', () => addWater(Number(b.dataset.ml), b)));
     const undo = $('#undoWater');
@@ -389,7 +439,12 @@
           '<label class="field">Altura (cm)<input name="height" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 178"></label>' +
         '</div>' +
         '<label class="field">Objetivo<input name="goal" maxlength="80" placeholder="Ex.: ganhar massa, emagrecer, saúde"></label>' +
-        '<label class="field">Meta de água por dia (litros)<input name="water" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex.: 3,0"></label>' +
+        '<label class="field">Meta de água por dia (litros)<input name="water" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex.: 3,0">' +
+          '<small id="waterHint"></small></label>' +
+        '<div class="opt-box">' +
+          '<label class="check-line"><input type="checkbox" name="smoke_on"><span>Acompanhar cigarros <em>(opcional, só você vê)</em></span></label>' +
+          '<label class="field hidden" id="smokeGoalField">Máximo de cigarros por dia<input name="smoke_goal" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 10"></label>' +
+        '</div>' +
         '<label class="field">Tag do grupo<input name="tag" maxlength="30" autocapitalize="characters" placeholder="Ex.: MATILHA-7K2Q">' +
           '<small>Quem tem a mesma tag vê os recados do Mural uns dos outros. Use uma tag difícil de adivinhar, ela funciona como uma senha do grupo. Deixe vazio para ficar sem grupo.</small></label>' +
         '<div class="error" id="formError"></div>' +
@@ -404,6 +459,28 @@
     f.goal.value = profile.goal || '';
     f.water.value = (profile.water_goal_ml / 1000).toFixed(1).replace('.', ',');
     f.tag.value = groupTag;
+
+    // sugestão de meta de água pelo peso (referência geral: 35 ml por kg)
+    const fmtL = (n) => n.toFixed(1).replace('.', ',');
+    const updHint = () => {
+      const w = parseFloat(String(f.weight.value).replace(',', '.'));
+      const hint = $('#waterHint');
+      if (!(w >= 20 && w <= 400)) { hint.innerHTML = ''; return; }
+      const l = Math.round(w * 35 / 100) / 10;
+      hint.innerHTML = 'Sugestão pelo seu peso: <button type="button" class="btn-link inline" id="useSugg">' + fmtL(l) + ' L, usar</button>' +
+        ' (referência geral de 35 ml por kg; com condição de saúde, siga a orientação do seu médico).';
+      $('#useSugg').addEventListener('click', () => { f.water.value = fmtL(l); });
+    };
+    f.weight.addEventListener('input', updHint);
+    updHint();
+
+    // cigarro (opcional e privado)
+    const cfg = G.habitosCfg ? G.habitosCfg() : { smoke: false, goal: null };
+    const syncSmoke = () => $('#smokeGoalField').classList.toggle('hidden', !f.smoke_on.checked);
+    f.smoke_on.checked = !!cfg.smoke;
+    f.smoke_goal.value = cfg.goal ? String(cfg.goal) : '';
+    f.smoke_on.addEventListener('change', syncSmoke);
+    syncSmoke();
 
     if (!forced) $('#closeSettings').addEventListener('click', closeModal);
     $('#logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); });
@@ -420,11 +497,14 @@
     const height = num(f.height.value);
     const waterL = num(f.water.value);
     const tag = normalizaTag(f.tag.value);
+    const smokeOn = f.smoke_on.checked;
+    const smokeGoal = parseInt(String(f.smoke_goal.value).trim(), 10);
 
     if (!name) return (err.textContent = 'Coloque seu nome.');
     if (!(weight >= 20 && weight <= 400)) return (err.textContent = 'Peso deve ficar entre 20 e 400 kg.');
     if (!(height >= 80 && height <= 260)) return (err.textContent = 'Altura deve ficar entre 80 e 260 cm.');
     if (!(waterL >= 0.5 && waterL <= 10)) return (err.textContent = 'Meta de água deve ficar entre 0,5 e 10 litros.');
+    if (smokeOn && !(smokeGoal >= 1 && smokeGoal <= 100)) return (err.textContent = 'Defina o máximo de cigarros por dia (de 1 a 100).');
     if (tag && (tag.length < 3 || tag.length > 30)) return (err.textContent = 'A tag precisa ter de 3 a 30 letras ou números.');
 
     const btn = $('#saveBtn');
@@ -460,10 +540,13 @@
       } catch (e) { /* ignora */ }
     }
 
+    let smokeErr = '';
+    if (G.habitosSaveCfg) smokeErr = await G.habitosSaveCfg(smokeOn, smokeOn ? smokeGoal : null);
+
     await loadProfile();
     updateBadge();
     closeModal();
-    toast('Perfil salvo! 🦍');
+    toast(smokeErr ? 'Perfil salvo, mas não salvei o cigarro: ' + smokeErr : 'Perfil salvo! 🦍');
     renderRoute();
   }
 
