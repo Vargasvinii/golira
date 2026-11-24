@@ -49,6 +49,7 @@
     get session() { return session; },
     get profile() { return profile; },
     get route() { return route; },
+    get groupTag() { return groupTag; },
   };
 
   function pad2(n) { return String(n).padStart(2, '0'); }

@@ -396,32 +396,10 @@ svg.ic.fill { fill: currentColor; stroke: none; }
 .ok-line { font-size: 13px; line-height: 1.4; align-items: flex-start; }
 .ok-line svg { margin-top: 1px; }
 
-/* ---------- v4: Gorila da Hoje (Tamagochi) ---------- */
-.card-box.gorilao { gap: 14px; }
-.mascot-wrap { border-radius: 22px; overflow: hidden; border: 1px solid var(--edge-hi); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 24px rgba(0, 0, 0, 0.45); line-height: 0; }
-.mascot { width: 100%; height: auto; display: block; max-height: 290px; }
-.mascot.maxed .gbody { filter: drop-shadow(0 0 8px rgba(47, 191, 113, 0.55)); }
-.mascot .dust { animation: dust 6s linear infinite; }
-.mascot .d2 { animation-duration: 8s; animation-delay: -2s; }
-.mascot .d3 { animation-duration: 7s; animation-delay: -4s; }
-.mascot .d4 { animation-duration: 9s; animation-delay: -1s; }
-@keyframes dust { from { transform: translateX(-10px); } to { transform: translateX(260px); } }
-.mascot .st { animation: twinkle 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes twinkle { 0%, 100% { transform: scale(0.6); opacity: 0.5; } 50% { transform: scale(1.15); opacity: 1; } }
-.mascot .l-sweat { animation: sweat 2.6s ease-in infinite; }
-@keyframes sweat { 0% { transform: translateY(-4px); } 100% { transform: translateY(14px); } }
-.mascot .gbody { animation: breathe-body 3.2s ease-in-out infinite; transform-origin: 120px 240px; }
-@keyframes breathe-body { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 1.02); } }
+/* ---------- v4: Força do dia ---------- */
+.card-box.forca { gap: 8px; padding: 14px 18px; }
 .power-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 700; color: var(--areia); margin-bottom: 6px; }
 .power-top strong { font-size: 16px; color: #fff; font-variant-numeric: tabular-nums; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 20px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--edge-hi); color: rgba(233, 233, 233, 0.8); }
-.chip.ok { color: var(--esm); border-color: rgba(47, 191, 113, 0.55); background: rgba(47, 191, 113, 0.1); }
-.recado { position: relative; background: rgba(209, 43, 69, 0.08); border: 1px solid rgba(209, 43, 69, 0.4); border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
-.recado-from { font-size: 10px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: var(--neon); }
-.recado p { font-size: 14px; line-height: 1.5; color: #F6E7D4; font-weight: 600; }
-.recado ul { list-style: none; display: flex; flex-direction: column; gap: 4px; padding-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.08); }
-.recado li { font-size: 12.5px; line-height: 1.45; color: rgba(233, 233, 233, 0.75); }
 
 /* ---------- v4: Histórico ---------- */
 .streak-row { display: flex; align-items: center; gap: 14px; }
@@ -462,3 +440,51 @@ svg.ic.fill { fill: currentColor; stroke: none; }
 .evo-main { min-width: 0; }
 .evo-name { font-size: 14px; font-weight: 700; }
 .spark { width: 84px; height: 26px; flex: none; }
+
+/* ---------- v5: Mural ---------- */
+.mural-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.mural-list { display: flex; flex-direction: column; gap: 14px; }
+.mural-compose textarea, .rec-new textarea {
+  width: 100%; resize: none; font: inherit; font-size: 14px; line-height: 1.45; color: var(--texto);
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--edge); border-radius: 14px; padding: 12px 14px; outline: none;
+}
+.mural-compose textarea:focus, .rec-new textarea:focus { border-color: var(--areia); box-shadow: 0 0 0 3px rgba(209, 43, 69, 0.25); }
+.mc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
+.mural-empty { text-align: center; }
+
+.recado-adm .rec-text { font-size: 15px; line-height: 1.5; color: #fff; white-space: pre-wrap; word-break: break-word; }
+.rec-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.rec-new summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--areia); padding: 4px 0 8px; }
+.rec-new .error { margin-top: 4px; }
+
+/* post que envelhece: --age 0 (novo) -> 1 (vai sumir) */
+.mural-post { position: relative; isolation: isolate; padding: 16px 16px 12px; color: #fff; }
+.mural-post.fresh { animation: rise 0.5s var(--ease-out) both; }
+.mp-bg {
+  position: absolute; inset: 0; z-index: -1; border-radius: 20px;
+  background:
+    radial-gradient(120% 90% at 20% 0%, rgba(255, 255, 255, 0.10), transparent 60%),
+    linear-gradient(160deg, var(--pc), var(--pc2));
+  border: 1.5px solid var(--pe);
+  box-shadow: 0 0 22px var(--pg), 0 8px 20px rgba(0, 0, 0, 0.45);
+}
+/* grão de areia: aparece conforme o tempo passa */
+.mp-bg::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; opacity: var(--grain); mix-blend-mode: soft-light; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 0.9  0 0 0 0 0.75  0 0 0 1.4 -0.2'/></filter><rect width='140' height='140' filter='url(%23g)'/></svg>");
+}
+.mural-post.b3 .mp-text, .mural-post.b2 .mp-text { color: rgba(255, 244, 230, 0.92); }
+.mp-head { display: flex; align-items: center; gap: 10px; }
+.mp-av { width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; font-weight: 800; font-size: 14px; color: #fff; background: rgba(0, 0, 0, 0.28); border: 1px solid rgba(255, 255, 255, 0.22); }
+.mp-who { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.mp-who strong { font-size: 14px; }
+.mp-who span { font-size: 11px; color: rgba(255, 255, 255, 0.68); }
+.mp-del { background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.15); color: rgba(255, 255, 255, 0.8); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; flex: none; }
+.mp-del svg { width: 14px; height: 14px; }
+.mp-text { margin: 10px 0 10px; font-size: 15px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+.mp-reacts { display: flex; gap: 8px; }
+.mp-react { display: inline-flex; align-items: center; gap: 5px; min-width: 44px; justify-content: center; padding: 6px 11px; border-radius: 999px; cursor: pointer; font-size: 14px; color: #fff; background: rgba(0, 0, 0, 0.26); border: 1px solid rgba(255, 255, 255, 0.16); transition: transform 0.25s var(--spring), background 0.2s; }
+.mp-react b { font-size: 12px; }
+.mp-react:active { transform: scale(0.9); }
+.mp-react.mine { background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.55); }
+@media (prefers-reduced-motion: reduce) { .mural-post.fresh { animation: none; } }
