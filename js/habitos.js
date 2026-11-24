@@ -52,6 +52,12 @@
     S.loaded = true;
   };
 
+  // leitura do estado do dia (usado pelo gorila da Hoje)
+  G.habitosState = function () {
+    return { loaded: S.loaded, missing: S.missing, junk: S.junk, workoutManual: S.workoutManual,
+      sessionTitle: S.sessionTitle, smokeCount: S.smoke.length, cfg: { smoke: S.cfg.smoke, goal: S.cfg.goal } };
+  };
+
   G.habitosCfg = function () { return { smoke: S.cfg.smoke, goal: S.cfg.goal }; };
 
   // devolve '' se deu certo, ou o texto do erro

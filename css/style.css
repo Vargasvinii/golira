@@ -395,3 +395,70 @@ svg.ic.fill { fill: currentColor; stroke: none; }
 #waterHint { line-height: 1.5; }
 .ok-line { font-size: 13px; line-height: 1.4; align-items: flex-start; }
 .ok-line svg { margin-top: 1px; }
+
+/* ---------- v4: Gorila da Hoje (Tamagochi) ---------- */
+.card-box.gorilao { gap: 14px; }
+.mascot-wrap { border-radius: 22px; overflow: hidden; border: 1px solid var(--edge-hi); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 24px rgba(0, 0, 0, 0.45); line-height: 0; }
+.mascot { width: 100%; height: auto; display: block; max-height: 290px; }
+.mascot.maxed .gbody { filter: drop-shadow(0 0 8px rgba(47, 191, 113, 0.55)); }
+.mascot .dust { animation: dust 6s linear infinite; }
+.mascot .d2 { animation-duration: 8s; animation-delay: -2s; }
+.mascot .d3 { animation-duration: 7s; animation-delay: -4s; }
+.mascot .d4 { animation-duration: 9s; animation-delay: -1s; }
+@keyframes dust { from { transform: translateX(-10px); } to { transform: translateX(260px); } }
+.mascot .st { animation: twinkle 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes twinkle { 0%, 100% { transform: scale(0.6); opacity: 0.5; } 50% { transform: scale(1.15); opacity: 1; } }
+.mascot .l-sweat { animation: sweat 2.6s ease-in infinite; }
+@keyframes sweat { 0% { transform: translateY(-4px); } 100% { transform: translateY(14px); } }
+.mascot .gbody { animation: breathe-body 3.2s ease-in-out infinite; transform-origin: 120px 240px; }
+@keyframes breathe-body { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 1.02); } }
+.power-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 700; color: var(--areia); margin-bottom: 6px; }
+.power-top strong { font-size: 16px; color: #fff; font-variant-numeric: tabular-nums; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 20px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--edge-hi); color: rgba(233, 233, 233, 0.8); }
+.chip.ok { color: var(--esm); border-color: rgba(47, 191, 113, 0.55); background: rgba(47, 191, 113, 0.1); }
+.recado { position: relative; background: rgba(209, 43, 69, 0.08); border: 1px solid rgba(209, 43, 69, 0.4); border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.recado-from { font-size: 10px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: var(--neon); }
+.recado p { font-size: 14px; line-height: 1.5; color: #F6E7D4; font-weight: 600; }
+.recado ul { list-style: none; display: flex; flex-direction: column; gap: 4px; padding-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.recado li { font-size: 12.5px; line-height: 1.45; color: rgba(233, 233, 233, 0.75); }
+
+/* ---------- v4: Histórico ---------- */
+.streak-row { display: flex; align-items: center; gap: 14px; }
+.flame { width: 54px; height: 62px; flex: none; filter: drop-shadow(0 0 12px rgba(255, 122, 69, 0.55)); transform-origin: 50% 90%; animation: flicker 1.6s ease-in-out infinite; }
+@keyframes flicker { 0%, 100% { transform: scale(1, 1) rotate(-1deg); } 35% { transform: scale(1.05, 1.1) rotate(1.5deg); } 70% { transform: scale(0.97, 1.04) rotate(-1deg); } }
+.streak-num { display: flex; flex-direction: column; flex: 1; }
+.streak-num strong { font-size: 44px; line-height: 1; color: #fff; font-weight: 800; font-variant-numeric: tabular-nums; }
+.streak-num span { font-size: 12px; color: rgba(233, 233, 233, 0.65); font-weight: 600; }
+.streak-best { display: flex; flex-direction: column; align-items: center; padding: 8px 14px; border: 1px solid var(--edge-hi); border-radius: 16px; background: rgba(255, 255, 255, 0.05); }
+.streak-best span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--areia); font-weight: 700; }
+.streak-best strong { font-size: 22px; color: #fff; }
+
+.week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.wd { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.wl { font-size: 11px; font-weight: 700; color: rgba(233, 233, 233, 0.55); }
+.wd.today .wl { color: var(--areia); }
+.wdot { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; border: 2px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.03); color: #04150C; transition: transform 0.3s var(--spring); }
+.wdot svg { width: 20px; height: 20px; stroke-width: 3; }
+.wd.future .wdot { border-style: dashed; opacity: 0.5; }
+.wd.part .wdot { background: linear-gradient(180deg, #7A1B2B, #4C0E18); border-color: rgba(209, 43, 69, 0.75); box-shadow: 0 0 12px rgba(209, 43, 69, 0.35); }
+.wd.full .wdot { background: linear-gradient(180deg, #46DB8B, var(--esm)); border-color: var(--esm); box-shadow: 0 0 14px rgba(47, 191, 113, 0.5); }
+.wd.today .wdot { box-shadow: 0 0 0 3px rgba(236, 211, 181, 0.35); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11px; color: rgba(233, 233, 233, 0.65); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lg { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1px solid rgba(255, 255, 255, 0.2); }
+.lg.full { background: var(--esm); border-color: var(--esm); }
+.lg.part { background: #7A1B2B; border-color: var(--neon); }
+
+.imc-row { display: flex; align-items: center; gap: 14px; }
+.imc-num { width: 78px; height: 78px; border-radius: 50%; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--agua); box-shadow: 0 0 16px rgba(90, 184, 240, 0.3); }
+.imc-num strong { font-size: 22px; color: #fff; line-height: 1; }
+.imc-num span { font-size: 10px; letter-spacing: 0.8px; color: var(--agua); font-weight: 700; }
+.imc-cls { font-size: 16px; font-weight: 800; color: var(--areia); }
+.wchart { width: 100%; height: 110px; display: block; }
+
+.evo { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.evo li { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.07); padding-bottom: 10px; }
+.evo-main { min-width: 0; }
+.evo-name { font-size: 14px; font-weight: 700; }
+.spark { width: 84px; height: 26px; flex: none; }

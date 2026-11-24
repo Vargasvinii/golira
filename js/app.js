@@ -103,6 +103,7 @@
     enterTimer = setTimeout(() => v.classList.remove('route-enter'), 1000);
   };
   G.icon = icon;
+  G.waterState = function () { return { total: water.total, goal: profile ? profile.water_goal_ml : 3000 }; };
   G.redrawHoje = function () { drawHoje(); };
   G.icon = icon;
   G.esc = esc;
@@ -258,6 +259,9 @@
     hojeFirst = true;
     drawHoje();
     // Cartão do treino de hoje (vem do treino.js; falha em silêncio se não houver)
+    if (G.gorilaoLoad) {
+      G.gorilaoLoad().then(() => { if (route === 'hoje') drawHoje(); }).catch(() => {});
+    }
     if (G.habitosLoad) {
       G.habitosLoad().then(() => { if (route === 'hoje') drawHoje(); }).catch(() => {});
     }
@@ -315,6 +319,7 @@
 
     $('#view').innerHTML =
       '<div class="greeting">Fala, ' + esc(profile.display_name) + '!</div>' +
+      (G.gorilaoHtml ? G.gorilaoHtml() : '') +
 
       '<div class="card-box highlight">' +
         '<div class="card-header-flex"><span class="card-title-text">Meta de Hidratação</span><span class="card-tag">Água</span></div>' +
@@ -341,6 +346,7 @@
         '<div class="card-body"><p>Mantenha o foco nos treinos, siga o plano e registre seus hábitos com precisão para fechar o dia no verde!</p></div>' +
       '</div>';
 
+    if (G.gorilaoMount) G.gorilaoMount();
     const bw = $('.bw');
     if (bw && prevPct !== pct) {
       requestAnimationFrame(() => requestAnimationFrame(() => { bw.style.transform = 'translateY(' + bottleY(pct) + 'px)'; }));
