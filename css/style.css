@@ -541,3 +541,23 @@ svg.ic.fill { fill: currentColor; stroke: none; }
 .prof-streak strong { font-size: 34px; line-height: 1; color: #fff; }
 .prof-streak span { font-size: 11px; color: rgba(233, 233, 233, 0.6); letter-spacing: 0.4px; text-transform: uppercase; margin-top: 4px; }
 .prof-streak.on { border-color: rgba(209, 43, 69, 0.6); box-shadow: 0 0 20px rgba(209, 43, 69, 0.22); }
+
+/* ---------- v7: fotos no Mural ---------- */
+.mc-btns { display: inline-flex; align-items: center; gap: 8px; }
+.btn-ghost.mc-photo { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; }
+.mc-photo svg { width: 16px; height: 16px; }
+.mc-prev { position: relative; width: 84px; height: 84px; border-radius: 14px; overflow: hidden; border: 1px solid var(--edge-hi); margin-top: 2px; }
+.mc-prev img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mc-prev-x { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; border: 0; background: rgba(0, 0, 0, 0.65); color: #fff; display: grid; place-items: center; cursor: pointer; }
+.mc-prev-x svg { width: 11px; height: 11px; }
+
+.mp-photo { display: block; width: 100%; padding: 0; margin: 2px 0 8px; border: 0; background: none; cursor: zoom-in; border-radius: 14px; overflow: hidden; }
+.mp-photo img {
+  display: block; width: 100%; max-height: 300px; object-fit: cover; border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  /* a foto também "envelhece": vai ficando sépia e desbotada */
+  filter: sepia(calc(var(--age, 0) * 0.8)) saturate(calc(1 - var(--age, 0) * 0.4)) brightness(calc(1 - var(--age, 0) * 0.12));
+}
+.rec-photo img { filter: none; max-height: 240px; }
+.lightbox { align-items: center; padding: 14px; cursor: zoom-out; }
+.lightbox img { max-width: 100%; max-height: 92vh; border-radius: 14px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7); animation: sheet 0.35s var(--spring) both; }

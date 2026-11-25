@@ -26,6 +26,14 @@
   const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
   const rgb = (c, a) => 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (a == null ? 1 : a) + ')';
 
+  const BUCKET = 'mural';
+  const CAM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></svg>';
+  let fotosOk = true;     // false se o schema-v7-fotos.sql ainda não foi rodado
+  let pend = null;        // foto escolhida pra postar  { blob, url }
+  let pendRec = null;     // foto escolhida pro recado macaquista
+  let limpou = false;     // faxina de fotos velhas (1x por abertura do app)
+  const urlCache = new Map(); // caminho -> { url, t }
+
   let state = null;       // { posts, reacts, rec }
   let timer = null;
   let tickTimer = null;
@@ -65,11 +73,18 @@
   async function load() {
     const sb = G.sb;
     const since = new Date(Date.now() - DAY_MS).toISOString();
-    const [pr, rr, mr] = await Promise.all([
-      sb.from('mural_posts').select('id, author_id, author_name, content, created_at').gt('created_at', since).order('created_at', { ascending: false }).limit(60),
-      sb.from('admin_announcements').select('id, content, created_at').order('created_at', { ascending: false }).limit(1),
+    const qp = (cols) => sb.from('mural_posts').select(cols).gt('created_at', since).order('created_at', { ascending: false }).limit(60);
+    const qa = (cols) => sb.from('admin_announcements').select(cols).order('created_at', { ascending: false }).limit(1);
+    const C1 = 'id, author_id, author_name, content, created_at', C2 = 'id, content, created_at';
+    let [pr, rr, mr] = await Promise.all([
+      qp(fotosOk ? C1 + ', image_path' : C1),
+      qa(fotosOk ? C2 + ', image_path' : C2),
       Promise.resolve(sb.rpc('group_members')).catch(() => ({ data: [] })),
     ]);
+    if (fotosOk && ((pr.error && /image_path/.test(pr.error.message || '')) || (rr.error && /image_path/.test(rr.error.message || '')))) {
+      fotosOk = false;
+      [pr, rr] = await Promise.all([qp(C1), qa(C2)]);
+    }
     const members = (mr && !mr.error && mr.data) ? mr.data : [];
     if (isMissing(pr.error) || isMissing(rr.error)) return { missing: true };
     if (pr.error) return { error: pr.error.message };
@@ -80,7 +95,81 @@
       const re = await sb.from('mural_reactions').select('post_id, user_id, emoji').in('post_id', posts.map((p) => p.id)).limit(3000);
       if (!re.error) reacts = re.data || [];
     }
+    if (fotosOk) await signed(posts.map((x) => x.image_path).concat([rec && rec.image_path]).filter(Boolean));
     return { posts, reacts, rec, members };
+  }
+
+  // ------------------------------------------------------------------
+  // Fotos
+  // ------------------------------------------------------------------
+  async function signed(paths) {
+    const need = paths.filter((x) => !urlCache.has(x) || Date.now() - urlCache.get(x).t > 45 * 60000);
+    if (!need.length) return;
+    try {
+      const r = await G.sb.storage.from(BUCKET).createSignedUrls(need, 3600);
+      (r.data || []).forEach((x) => { if (x.signedUrl) urlCache.set(x.path, { url: x.signedUrl, t: Date.now() }); });
+    } catch (e) { /* sem foto, segue o texto */ }
+  }
+  const urlOf = (x) => (urlCache.get(x) || {}).url || '';
+  const newId = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+
+  // Foto -> JPEG leve (lado maior 1080 px, até ~350 KB)
+  async function fotoBlob(file) {
+    let bmp;
+    try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+    catch (e) {
+      bmp = await new Promise((ok, no) => {
+        const img = new Image(); const u = URL.createObjectURL(file);
+        img.onload = () => { URL.revokeObjectURL(u); ok(img); }; img.onerror = () => no(new Error('img')); img.src = u;
+      });
+    }
+    let scale = Math.min(1, 1080 / Math.max(bmp.width, bmp.height));
+    let blob = null;
+    for (let i = 0; i < 4; i++) {
+      const cv = document.createElement('canvas');
+      cv.width = Math.max(1, Math.round(bmp.width * scale));
+      cv.height = Math.max(1, Math.round(bmp.height * scale));
+      cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+      blob = await new Promise((ok) => cv.toBlob(ok, 'image/jpeg', i === 0 ? 0.82 : 0.65));
+      if (blob && blob.size <= 350000) break;
+      scale *= 0.8;
+    }
+    if (!blob) throw new Error('blob');
+    return { blob, url: URL.createObjectURL(blob) };
+  }
+
+  async function upload(prefix, ph) {
+    const path = prefix + '/' + newId() + '.jpg';
+    const r = await G.sb.storage.from(BUCKET).upload(path, ph.blob, { contentType: 'image/jpeg' });
+    if (r.error) throw new Error(r.error.message);
+    return path;
+  }
+  function apagarFoto(path) {
+    if (!path) return;
+    try { Promise.resolve(G.sb.storage.from(BUCKET).remove([path])).catch(() => {}); } catch (e) { /* ok */ }
+  }
+
+  // Faxina: foto de recado que já sumiu (mais de 24h) sai do espaço de fotos
+  async function limparFotos() {
+    if (limpou || !fotosOk || !G.profile || !G.profile.group_id) return;
+    limpou = true;
+    try {
+      const gid = G.profile.group_id;
+      const r = await G.sb.storage.from(BUCKET).list(gid, { limit: 100 });
+      const vivos = new Set(state.posts.map((x) => x.image_path).filter(Boolean));
+      const velhos = (r.data || []).filter((f) => f.created_at && Date.now() - new Date(f.created_at).getTime() > DAY_MS + 5 * 60000 && !vivos.has(gid + '/' + f.name)).map((f) => gid + '/' + f.name);
+      if (velhos.length) await G.sb.storage.from(BUCKET).remove(velhos);
+    } catch (e) { /* silencioso */ }
+  }
+
+  function prevHtml(ph, idc) {
+    return ph ? '<div class="mc-prev"><img src="' + ph.url + '" alt=""><button type="button" class="mc-prev-x" data-prevx="' + idc + '" aria-label="Tirar foto">' + ic('x') + '</button></div>' : '';
+  }
+  function zoom(path) {
+    const u = urlOf(path), root = document.getElementById('modalRoot');
+    if (!u || !root) return;
+    root.innerHTML = '<div class="modal-overlay lightbox" id="lbOv"><img src="' + u + '" alt=""></div>';
+    document.getElementById('lbOv').onclick = () => { root.innerHTML = ''; };
   }
 
   function memberOf(id) { return (state.members || []).find((m) => m.id === id) || null; }
@@ -176,7 +265,8 @@
           '<div class="mp-who"><strong>' + esc(p.author_name || 'Gorila') + '</strong><span>' + ago(p.created_at) + ' · ' + leftLabel(p.created_at) + '</span></div>' +
           (p.author_id === me ? '<button class="mp-del" data-del="' + p.id + '" aria-label="Apagar recado">' + ic('x') + '</button>' : '') +
         '</div>' +
-        '<p class="mp-text">' + esc(p.content) + '</p>' +
+        (p.content ? '<p class="mp-text">' + esc(p.content) + '</p>' : '') +
+        (p.image_path && urlOf(p.image_path) ? '<button class="mp-photo" data-zoom="' + esc(p.image_path) + '" aria-label="Ver foto"><img src="' + esc(urlOf(p.image_path)) + '" alt="" loading="lazy"></button>' : '') +
         '<div class="mp-reacts">' + rx + '</div>' +
       '</div>' +
     '</article>';
@@ -189,7 +279,8 @@
     let h = '<section class="recado-adm card-box highlight">' +
       '<div class="card-header-flex"><span class="card-title-text">RECADO MACAQUISTA</span><span class="card-tag">ADM</span></div>';
     if (r) {
-      h += '<p class="rec-text">' + esc(r.content) + '</p>' +
+      h += (r.content ? '<p class="rec-text">' + esc(r.content) + '</p>' : '') +
+        (r.image_path && urlOf(r.image_path) ? '<button class="mp-photo rec-photo" data-zoom="' + esc(r.image_path) + '" aria-label="Ver foto"><img src="' + esc(urlOf(r.image_path)) + '" alt=""></button>' : '') +
         '<div class="rec-foot"><span class="muted">' + dateLabel(r.created_at) + '</span>' +
         (isAdmin ? '<button class="btn-link danger" id="recDel" data-id="' + r.id + '">Apagar recado</button>' : '') + '</div>';
     } else {
@@ -198,7 +289,10 @@
     if (isAdmin) {
       h += '<details class="rec-new"><summary>' + (r ? 'Publicar novo recado' : 'Escrever recado') + '</summary>' +
         '<textarea id="recTxt" maxlength="' + MAX_REC + '" rows="2" placeholder="Recado pra matilha toda (não expira)"></textarea>' +
-        '<div class="mc-row"><span class="muted" id="recCnt">0/' + MAX_REC + '</span><button class="btn-action btn-small" id="recSend">Publicar</button></div>' +
+        '<div id="recPrev">' + prevHtml(pendRec, 'rec') + '</div>' +
+        '<div class="mc-row"><span class="muted" id="recCnt">0/' + MAX_REC + '</span><span class="mc-btns">' +
+          (fotosOk ? '<button type="button" class="btn-ghost btn-small mc-photo" id="recPhoto">' + CAM + 'Foto</button><input type="file" accept="image/*" id="recFile" class="hidden">' : '') +
+          '<button class="btn-action btn-small" id="recSend">Publicar</button></span></div>' +
         '<p class="error" id="recErr"></p></details>';
     }
     return h + '</section>';
@@ -219,7 +313,10 @@
       '<div class="card-box mural-compose">' +
         '<div class="card-header-flex"><span class="card-title-text">Mural da Matilha</span><span class="card-tag">' + esc(tag) + '</span></div>' +
         '<textarea id="mpTxt" maxlength="' + MAX + '" rows="2" placeholder="Solta um recado pra matilha… (some em 24h)"></textarea>' +
-        '<div class="mc-row"><span class="muted" id="mpCnt">0/' + MAX + '</span><button class="btn-action btn-small" id="mpSend" disabled>Postar</button></div>' +
+        '<div id="mpPrev"></div>' +
+        '<div class="mc-row"><span class="muted" id="mpCnt">0/' + MAX + '</span><span class="mc-btns">' +
+          (fotosOk ? '<button type="button" class="btn-ghost btn-small mc-photo" id="mpPhoto">' + CAM + 'Foto</button><input type="file" accept="image/*" id="mpFile" class="hidden">' : '') +
+          '<button class="btn-action btn-small" id="mpSend" disabled>Postar</button></span></div>' +
         '<p class="error" id="mpErr"></p>' +
       '</div>' +
       '<div id="muralList" class="mural-list">' + listHtml() + '</div>';
@@ -260,15 +357,25 @@
   async function send() {
     const ta = $('#mpTxt'), btn = $('#mpSend'), err = $('#mpErr');
     const txt = ta.value.trim();
-    if (!txt) return;
+    if (!txt && !pend) return;
     btn.disabled = true; err.textContent = '';
-    const r = await G.sb.from('mural_posts').insert({ content: txt }).select('id, author_id, author_name, content, created_at').single();
+    let path = null;
+    if (pend) {
+      try { path = await upload(G.profile.group_id, pend); }
+      catch (e) { err.textContent = 'Não consegui enviar a foto: ' + e.message; btn.disabled = false; return; }
+    }
+    const body = { content: txt };
+    if (path) body.image_path = path;
+    const r = await G.sb.from('mural_posts').insert(body).select(path ? 'id, author_id, author_name, content, created_at, image_path' : 'id, author_id, author_name, content, created_at').single();
     if (r.error) {
+      apagarFoto(path);
       err.textContent = 'Não consegui postar: ' + r.error.message;
       btn.disabled = false;
       return;
     }
+    if (path) await signed([path]);
     ta.value = '';
+    pend = null; $('#mpPrev').innerHTML = '';
     $('#mpCnt').textContent = '0/' + MAX;
     state.posts.unshift(r.data);
     redrawList();
@@ -278,8 +385,10 @@
   }
 
   async function del(id) {
+    const alvo = state.posts.find((x) => x.id === id);
     const r = await G.sb.from('mural_posts').delete().eq('id', id);
     if (r.error) { G.toast && G.toast('Não deu pra apagar.'); return; }
+    if (alvo) apagarFoto(alvo.image_path);
     state.posts = state.posts.filter((p) => p.id !== id);
     state.reacts = state.reacts.filter((x) => x.post_id !== id);
     redrawList();
@@ -308,21 +417,34 @@
   async function sendRec() {
     const ta = $('#recTxt'), btn = $('#recSend'), err = $('#recErr');
     const txt = ta.value.trim();
-    if (!txt) return;
+    if (!txt && !pendRec) return;
     btn.disabled = true; err.textContent = '';
-    const r = await G.sb.from('admin_announcements').insert({ content: txt, created_by: G.session.user.id }).select('id, content, created_at').single();
+    let path = null;
+    if (pendRec) {
+      try { path = await upload('adm', pendRec); }
+      catch (e) { err.textContent = 'Não consegui enviar a foto: ' + e.message; btn.disabled = false; return; }
+    }
+    const body = { content: txt, created_by: G.session.user.id };
+    if (path) body.image_path = path;
+    const r = await G.sb.from('admin_announcements').insert(body).select(path ? 'id, content, created_at, image_path' : 'id, content, created_at').single();
     btn.disabled = false;
-    if (r.error) { err.textContent = 'Não consegui publicar: ' + r.error.message; return; }
+    if (r.error) { apagarFoto(path); err.textContent = 'Não consegui publicar: ' + r.error.message; return; }
+    if (path) await signed([path]);
+    pendRec = null;
+    if (state.rec && state.rec.image_path) apagarFoto(state.rec.image_path);
     state.rec = r.data;
     redrawRec();
     G.toast && G.toast('Recado macaquista publicado.');
   }
 
   async function delRec(id) {
+    const antigo = state.rec && state.rec.id === id ? state.rec.image_path : null;
     const r = await G.sb.from('admin_announcements').delete().eq('id', id);
     if (r.error) { G.toast && G.toast('Não deu pra apagar.'); return; }
+    apagarFoto(antigo);
     // se havia um anterior, ele volta a ser o mais recente
-    const n = await G.sb.from('admin_announcements').select('id, content, created_at').order('created_at', { ascending: false }).limit(1);
+    const n = await G.sb.from('admin_announcements').select(fotosOk ? 'id, content, created_at, image_path' : 'id, content, created_at').order('created_at', { ascending: false }).limit(1);
+    if (fotosOk && n.data && n.data[0]) await signed([n.data[0].image_path].filter(Boolean));
     state.rec = (n.data && n.data[0]) || null;
     redrawRec();
   }
@@ -331,15 +453,33 @@
     view.oninput = (e) => {
       if (e.target.id === 'mpTxt') {
         $('#mpCnt').textContent = e.target.value.length + '/' + MAX;
-        $('#mpSend').disabled = !e.target.value.trim();
+        $('#mpSend').disabled = !(e.target.value.trim() || pend);
       } else if (e.target.id === 'recTxt') {
         $('#recCnt').textContent = e.target.value.length + '/' + MAX_REC;
       }
     };
+    view.onchange = async (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f || (e.target.id !== 'mpFile' && e.target.id !== 'recFile')) return;
+      const rec = e.target.id === 'recFile';
+      try {
+        const ph = await fotoBlob(f);
+        if (rec) { pendRec = ph; $('#recPrev').innerHTML = prevHtml(ph, 'rec'); }
+        else { pend = ph; $('#mpPrev').innerHTML = prevHtml(ph, 'mp'); $('#mpSend').disabled = false; }
+      } catch (x) { const er = $(rec ? '#recErr' : '#mpErr'); if (er) er.textContent = 'Não consegui abrir essa imagem. Tente outra.'; }
+      e.target.value = '';
+    };
     view.onclick = (e) => {
       const t = e.target.closest('button');
       if (!t) return;
-      if (t.id === 'mpSend') send();
+      if (t.id === 'mpPhoto') $('#mpFile').click();
+      else if (t.id === 'recPhoto') $('#recFile').click();
+      else if (t.dataset.prevx) {
+        if (t.dataset.prevx === 'rec') { pendRec = null; $('#recPrev').innerHTML = ''; }
+        else { pend = null; $('#mpPrev').innerHTML = ''; $('#mpSend').disabled = !$('#mpTxt').value.trim(); }
+      }
+      else if (t.dataset.zoom) zoom(t.dataset.zoom);
+      else if (t.id === 'mpSend') send();
       else if (t.id === 'recSend') sendRec();
       else if (t.id === 'recDel') delRec(t.dataset.id);
       else if (t.dataset.prof) profileCard(t.dataset.prof);
@@ -347,8 +487,9 @@
       else if (t.dataset.react) react(t.dataset.react, t.dataset.emoji);
     };
     G.cleanup = function () {
-      const mr = document.getElementById('modalRoot'); if (mr && mr.querySelector('.prof-card')) mr.innerHTML = '';
-      view.oninput = null; view.onclick = null;
+      const mr = document.getElementById('modalRoot'); if (mr && (mr.querySelector('.prof-card') || mr.querySelector('.lightbox'))) mr.innerHTML = '';
+      view.oninput = null; view.onclick = null; view.onchange = null;
+      pend = null; pendRec = null;
       clearInterval(timer); clearInterval(tickTimer);
       timer = tickTimer = null; state = null;
     };
@@ -392,6 +533,7 @@
     view.innerHTML = shell();
     bind(view);
     if (G.enter) G.enter();
+    limparFotos();
 
     timer = setInterval(refresh, POLL_MS);
     // reavalia as cores/contagem regressiva sem ir ao servidor
