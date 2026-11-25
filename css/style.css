@@ -602,3 +602,5 @@ svg.ic.fill { fill: currentColor; stroke: none; }
 .ia-ficha .row-btns .btn-action, .ia-ficha .row-btns .btn-ghost { padding: 10px 8px; font-size: 12px; }
 .ia-saved { font-size: 12px; font-weight: 700; color: var(--esm); }
 @media (prefers-reduced-motion: reduce) { .ia-msg { animation: none; } .ia-typing i { animation: none; opacity: 0.7; } }
+
+.prova-btn { flex: none; width: 100%; }

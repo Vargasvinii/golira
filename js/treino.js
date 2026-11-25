@@ -641,6 +641,7 @@
       facts: null, parts: [], changes: [], changesState: 'idle',
     };
     S.active = null;
+    if (G.provaLoad) await G.provaLoad().catch(() => {});
     S.view = 'finish';
     render();
     window.scrollTo(0, 0);
@@ -690,6 +691,7 @@
         '</ul><div class="row-btns"><button class="btn-ghost" type="button" data-t="keep-ficha">Manter a ficha</button>' +
         '<button class="btn-action" type="button" data-t="upd-ficha">Atualizar ficha</button></div></div>';
     }
+    if (G.provaHtml) h += G.provaHtml();
     h += '<button class="btn-action btn-lg" type="button" data-t="fin-back">Voltar ao Treino</button>';
     return h;
   }

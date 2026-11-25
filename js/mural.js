@@ -96,7 +96,9 @@
       if (!re.error) reacts = re.data || [];
     }
     if (fotosOk) await signed(posts.map((x) => x.image_path).concat([rec && rec.image_path]).filter(Boolean));
-    return { posts, reacts, rec, members };
+    const pv = await Promise.resolve(sb.rpc('group_proofs')).catch(() => null);
+    const proofs = (pv && !pv.error && pv.data) || [];
+    return { posts, reacts, rec, members, proofs };
   }
 
   // ------------------------------------------------------------------
@@ -298,6 +300,15 @@
     return h + '</section>';
   }
 
+  // selos do dia: só nome e horário, sem foto
+  function proofsHtml() {
+    const ps = state.proofs || [];
+    if (!ps.length) return '';
+    return '<div class="card-box"><div class="card-title-text">TREINO PAGO ✅</div><ul class="recent-list">' +
+      ps.map((x) => '<li><span>' + esc(x.display_name || 'Gorila') + '</span><span class="ex-meta">' + ago(x.created_at) + '</span></li>').join('') +
+      '</ul></div>';
+  }
+
   function listHtml() {
     if (!state.posts.length) {
       return '<div class="card-box mural-empty"><p class="muted">Mural vazio. Quebra o gelo e solta o primeiro recado da matilha.</p></div>';
@@ -310,6 +321,7 @@
     return FILTERS +
       '<div id="muralRec">' + recadoHtml() + '</div>' +
       stripHtml() +
+      '<div id="muralProvas">' + proofsHtml() + '</div>' +
       '<div class="card-box mural-compose">' +
         '<div class="card-header-flex"><span class="card-title-text">Mural da Matilha</span><span class="card-tag">' + esc(tag) + '</span></div>' +
         '<textarea id="mpTxt" maxlength="' + MAX + '" rows="2" placeholder="Solta um recado pra matilha… (some em 24h)"></textarea>' +
@@ -352,6 +364,8 @@
     state = d;
     redrawList();
     redrawRec();
+    const pv = $('#muralProvas');
+    if (pv) pv.innerHTML = proofsHtml();
   }
 
   async function send() {

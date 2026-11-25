@@ -29,6 +29,7 @@
     const today = G.hojeISO();
     const start = new Date();
     start.setHours(0, 0, 0, 0);
+    if (G.provaLoad) await G.provaLoad().catch(() => {});
     const r = await Promise.all([
       sb.from('habit_logs').select('id, habit, logged_at').eq('logged_on', today).order('logged_at', { ascending: false }),
       sb.from('user_habits').select('*').maybeSingle(),
@@ -162,6 +163,7 @@
     if (S.missing) return '<div id="habitosBox" class="habs">' + missingHtml() + '</div>';
     return '<div id="habitosBox" class="habs">' +
       '<div class="habit-grid">' + junkCard() + trainCard() + '</div>' +
+      ((S.sessionTitle || S.workoutManual) && G.provaHtml ? G.provaHtml() : '') +
       (S.cfg.smoke ? smokeCard() : '') +
     '</div>';
   };
