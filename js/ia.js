@@ -93,14 +93,40 @@
   // ------------------------------------------------------------------
   // Ficha enviada pela IA -> validada -> mostrada pra aprovação
   // ------------------------------------------------------------------
+  // Tenta ler o JSON; se vier com defeito comum (vírgula sobrando, aspas curvas) ou cortado no meio
+  // (resposta longa), aproveita tudo o que veio completo.
+  function lerJsonFicha(src) {
+    const limpo = String(src || '').trim()
+      .replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'")
+      .replace(/^\s*json\s*/i, '');
+    const tenta = (t) => { try { return JSON.parse(t.replace(/,\s*([}\]])/g, '$1')); } catch (e) { return undefined; } };
+    let o = tenta(limpo);
+    if (o !== undefined) return { obj: o, partial: false };
+    // reparo: percorre o texto e, em cada "}" fechado, guarda o que faltaria fechar
+    const pilha = []; let str = false, esc2 = false; const cortes = [];
+    for (let i = 0; i < limpo.length; i++) {
+      const c = limpo[i];
+      if (str) { if (esc2) esc2 = false; else if (c === '\\') esc2 = true; else if (c === '"') str = false; continue; }
+      if (c === '"') str = true;
+      else if (c === '{') pilha.push('}');
+      else if (c === '[') pilha.push(']');
+      else if (c === '}' || c === ']') { pilha.pop(); if (c === '}') cortes.push([i + 1, pilha.slice().reverse().join('')]); }
+    }
+    for (let k = cortes.length - 1; k >= 0; k--) {
+      o = tenta(limpo.slice(0, cortes[k][0]) + cortes[k][1]);
+      if (o !== undefined && o && Array.isArray(o.treinos) && o.treinos.length) return { obj: o, partial: true };
+    }
+    return null;
+  }
+
   function parseFicha(raw) {
     const m = FICHA_RE.exec(raw || '');
     if (!m) return { text: raw, ficha: null, broken: false };
     const text = raw.replace(FICHA_RE, '').trim();
-    let obj;
-    try { obj = JSON.parse(m[1].trim()); } catch (e) { return { text, ficha: null, broken: true }; }
-    const f = normalizaFicha(obj);
-    return { text, ficha: f, broken: !f };
+    const lido = lerJsonFicha(m[1]);
+    if (!lido) return { text, ficha: null, broken: true };
+    const f = normalizaFicha(lido.obj);
+    return { text, ficha: f, broken: !f, partial: !!(f && lido.partial) };
   }
 
   function normalizaFicha(o) {
@@ -213,7 +239,8 @@
     return '<div class="ia-msg bot' + (m.err ? ' err' : '') + '"><img class="ia-av" src="/img/gorila.png" alt=""><div class="ia-bub">' +
       (p.text ? fmt(p.text) : '') +
       (p.ficha ? fichaHtml(p.ficha, i, !!m.saved) : '') +
-      (p.broken ? '<p class="muted">A ficha veio bagunçada. Pede de novo que eu refaço.</p>' : '') +
+      (p.partial ? '<p class="muted">A resposta veio cortada, então mostrei só os treinos que chegaram completos. Se faltar algum, peça pra eu completar.</p>' : '') +
+      (p.broken ? '<p class="muted">A ficha veio bagunçada.</p><button class="btn-ghost btn-small" type="button" data-ia="retry">Refazer a ficha</button>' : '') +
       '</div></div>';
   }
 
@@ -329,6 +356,7 @@
       if (!b) return;
       const a = b.dataset.ia;
       if (a === 'chip') enviar(b.textContent);
+      else if (a === 'retry') enviar('Refaça a ficha, mais enxuta: até 6 exercícios por treino.');
       else if (a === 'ficha-ok') salvarFicha(Number(b.dataset.i));
       else if (a === 'ficha-no') {
         const m = S.msgs[Number(b.dataset.i)];

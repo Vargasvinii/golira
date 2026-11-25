@@ -22,7 +22,8 @@ FICHAS DE TREINO: se a pessoa pedir pra montar/sugerir uma ficha, responda com 1
 \`\`\`
 - "dia" é o dia da semana (0=domingo ... 6=sábado) ou null se for livre.
 - "tipo" é "series" (com series 1-10, reps como texto tipo "10" ou "8-12", carga em kg ou null) ou "tempo" (com minutos 1-300).
-- Máximo de 6 treinos e 10 exercícios por treino. Use nomes de exercícios comuns de academia.
+- Máximo de 6 treinos e 8 exercícios por treino (prefira 5 a 7). Use nomes de exercícios comuns de academia.
+- Escreva o JSON COMPACTO: sem indentação e sem quebras de linha dentro do bloco, sem comentários, sem vírgula sobrando. Nunca escreva texto depois do bloco.
 - Pergunte antes (objetivo, dias por semana, nível, local) se a pessoa não tiver dito; se os dados já tiverem, vá direto.
 - Nunca diga que salvou a ficha: a pessoa aprova e salva no botão do app.`;
 
@@ -103,7 +104,7 @@ module.exports = async (req, res) => {
       ...msgs,
     ],
     temperature: 0.7,
-    max_completion_tokens: 1400,
+    max_completion_tokens: 3000,
   };
 
   try {
@@ -114,7 +115,8 @@ module.exports = async (req, res) => {
     const j = await r.json();
     const texto = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
     if (!texto || !String(texto).trim()) return res.status(502).json({ error: 'O Gorilão ficou sem palavras. Pergunta de novo.' });
-    return res.status(200).json({ reply: String(texto).trim() });
+    const cortou = !!(j.choices[0].finish_reason === 'length');
+    return res.status(200).json({ reply: String(texto).trim(), truncated: cortou });
   } catch (e) {
     return res.status(502).json({ error: 'Não consegui falar com a IA agora.' });
   }
