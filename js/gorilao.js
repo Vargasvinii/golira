@@ -39,8 +39,9 @@
   // ------------------------------------------------------------------
   // Fatos do dia -> força e recado
   // ------------------------------------------------------------------
-  function facts() {
+  function facts(waterTotal) {
     const w = G.waterState ? G.waterState() : { total: 0, goal: 3000 };
+    if (typeof waterTotal === 'number') w.total = waterTotal; // aba IA passa a água lida do banco
     const h = G.habitosState ? G.habitosState() : null;
     const now = new Date();
     const hour = now.getHours() + now.getMinutes() / 60;
@@ -128,8 +129,8 @@
   };
 
   // recado do Gorilão (por regras): será usado na aba IA
-  G.gorilaoRecados = function () {
-    const f = facts();
+  G.gorilaoRecados = function (waterTotal) {
+    const f = facts(waterTotal);
     return recados(f, clamp(power(f), 0, 1));
   };
 
