@@ -14,7 +14,7 @@
   const DAY_MS = 24 * 60 * 60 * 1000;
   const MAX = 280;
   const MAX_REC = 500;
-  const EMOJIS = ['🦍', '🔥', '💪'];
+  const EMOJIS = ['👍🏽', '🍪', '🔥', '💪', '🍅'];
   const POLL_MS = 25000;
 
   const isMissing = (e) => !!e && (e.code === 'PGRST205' || e.code === '42P01' || /schema cache|does not exist/i.test(e.message || ''));
@@ -65,10 +65,12 @@
   async function load() {
     const sb = G.sb;
     const since = new Date(Date.now() - DAY_MS).toISOString();
-    const [pr, rr] = await Promise.all([
+    const [pr, rr, mr] = await Promise.all([
       sb.from('mural_posts').select('id, author_id, author_name, content, created_at').gt('created_at', since).order('created_at', { ascending: false }).limit(60),
       sb.from('admin_announcements').select('id, content, created_at').order('created_at', { ascending: false }).limit(1),
+      Promise.resolve(sb.rpc('group_members')).catch(() => ({ data: [] })),
     ]);
+    const members = (mr && !mr.error && mr.data) ? mr.data : [];
     if (isMissing(pr.error) || isMissing(rr.error)) return { missing: true };
     if (pr.error) return { error: pr.error.message };
     const posts = pr.data || [];
@@ -78,7 +80,45 @@
       const re = await sb.from('mural_reactions').select('post_id, user_id, emoji').in('post_id', posts.map((p) => p.id)).limit(3000);
       if (!re.error) reacts = re.data || [];
     }
-    return { posts, reacts, rec };
+    return { posts, reacts, rec, members };
+  }
+
+  function memberOf(id) { return (state.members || []).find((m) => m.id === id) || null; }
+
+  // sequência mostrada: se o último registro é anterior a ontem, a sequência já quebrou
+  function streakOf(m) {
+    if (!m || !m.streak_day) return 0;
+    const ontem = G.hojeISO(new Date(Date.now() - DAY_MS));
+    return m.streak_day >= ontem ? (m.streak_days || 0) : 0;
+  }
+
+  function stripHtml() {
+    const ms = state.members || [];
+    if (ms.length < 2) return '';
+    return '<div class="matilha-strip" role="list">' + ms.map((m) => {
+      const n = streakOf(m);
+      return '<button class="ms-item' + (n > 0 ? ' on' : '') + '" role="listitem" data-prof="' + m.id + '">' +
+        G.avatarHtml(m.avatar, m.display_name, 'ms-av') +
+        '<span class="ms-name">' + esc(m.display_name) + '</span>' +
+        '<span class="ms-n">' + n + (n === 1 ? ' dia' : ' dias') + '</span></button>';
+    }).join('') + '</div>';
+  }
+
+  function profileCard(id) {
+    const m = memberOf(id);
+    if (!m) return;
+    const n = streakOf(m);
+    const root = document.getElementById('modalRoot');
+    if (!root) return;
+    root.innerHTML = '<div class="modal-overlay" id="profOv"><div class="modal-card prof-card">' +
+      '<button class="modal-close prof-x" type="button" id="profX" aria-label="Fechar">✕</button>' +
+      G.avatarHtml(m.avatar, m.display_name, 'av-xl') +
+      '<div class="prof-name">' + esc(m.display_name) + '</div>' +
+      '<div class="prof-streak' + (n > 0 ? ' on' : '') + '"><strong>' + n + '</strong><span>' + (n === 1 ? 'dia seguido' : 'dias seguidos') + '</span></div>' +
+      '</div></div>';
+    const close = () => { root.innerHTML = ''; };
+    document.getElementById('profX').onclick = close;
+    document.getElementById('profOv').onclick = (e) => { if (e.target.id === 'profOv') close(); };
   }
 
   function reactionsOf(postId) {
@@ -130,7 +170,9 @@
       '<div class="mp-bg" style="filter:url(#sand' + bucket(a) + ')"></div>' +
       '<div class="mp-in">' +
         '<div class="mp-head">' +
-          '<span class="mp-av">' + initial(p.author_name) + '</span>' +
+          (memberOf(p.author_id)
+            ? '<button class="mp-avb" data-prof="' + p.author_id + '" aria-label="Ver perfil">' + G.avatarHtml(memberOf(p.author_id).avatar, p.author_name, 'mp-av') + '</button>'
+            : G.avatarHtml(null, p.author_name, 'mp-av')) +
           '<div class="mp-who"><strong>' + esc(p.author_name || 'Gorila') + '</strong><span>' + ago(p.created_at) + ' · ' + leftLabel(p.created_at) + '</span></div>' +
           (p.author_id === me ? '<button class="mp-del" data-del="' + p.id + '" aria-label="Apagar recado">' + ic('x') + '</button>' : '') +
         '</div>' +
@@ -145,7 +187,7 @@
     const isAdmin = !!(G.profile && G.profile.is_admin);
     if (!r && !isAdmin) return '';
     let h = '<section class="recado-adm card-box highlight">' +
-      '<div class="card-header-flex"><span class="card-title-text">Recado macaquista</span><span class="card-tag">ADM</span></div>';
+      '<div class="card-header-flex"><span class="card-title-text">RECADO MACAQUISTA</span><span class="card-tag">ADM</span></div>';
     if (r) {
       h += '<p class="rec-text">' + esc(r.content) + '</p>' +
         '<div class="rec-foot"><span class="muted">' + dateLabel(r.created_at) + '</span>' +
@@ -155,7 +197,7 @@
     }
     if (isAdmin) {
       h += '<details class="rec-new"><summary>' + (r ? 'Publicar novo recado' : 'Escrever recado') + '</summary>' +
-        '<textarea id="recTxt" maxlength="' + MAX_REC + '" rows="3" placeholder="Recado pra matilha toda (não expira)"></textarea>' +
+        '<textarea id="recTxt" maxlength="' + MAX_REC + '" rows="2" placeholder="Recado pra matilha toda (não expira)"></textarea>' +
         '<div class="mc-row"><span class="muted" id="recCnt">0/' + MAX_REC + '</span><button class="btn-action btn-small" id="recSend">Publicar</button></div>' +
         '<p class="error" id="recErr"></p></details>';
     }
@@ -173,9 +215,10 @@
     const tag = G.groupTag;
     return FILTERS +
       '<div id="muralRec">' + recadoHtml() + '</div>' +
+      stripHtml() +
       '<div class="card-box mural-compose">' +
         '<div class="card-header-flex"><span class="card-title-text">Mural da Matilha</span><span class="card-tag">' + esc(tag) + '</span></div>' +
-        '<textarea id="mpTxt" maxlength="' + MAX + '" rows="3" placeholder="Solta um recado pra matilha… (some em 24h)"></textarea>' +
+        '<textarea id="mpTxt" maxlength="' + MAX + '" rows="2" placeholder="Solta um recado pra matilha… (some em 24h)"></textarea>' +
         '<div class="mc-row"><span class="muted" id="mpCnt">0/' + MAX + '</span><button class="btn-action btn-small" id="mpSend" disabled>Postar</button></div>' +
         '<p class="error" id="mpErr"></p>' +
       '</div>' +
@@ -299,10 +342,12 @@
       if (t.id === 'mpSend') send();
       else if (t.id === 'recSend') sendRec();
       else if (t.id === 'recDel') delRec(t.dataset.id);
+      else if (t.dataset.prof) profileCard(t.dataset.prof);
       else if (t.dataset.del) del(t.dataset.del);
       else if (t.dataset.react) react(t.dataset.react, t.dataset.emoji);
     };
     G.cleanup = function () {
+      const mr = document.getElementById('modalRoot'); if (mr && mr.querySelector('.prof-card')) mr.innerHTML = '';
       view.oninput = null; view.onclick = null;
       clearInterval(timer); clearInterval(tickTimer);
       timer = tickTimer = null; state = null;
@@ -325,7 +370,7 @@
       // mesmo sem grupo o recado macaquista (público) pode ser lido
       const r = await G.sb.from('admin_announcements').select('id, content, created_at').order('created_at', { ascending: false }).limit(1);
       if (G.route !== 'mural') return;
-      state = { posts: [], reacts: [], rec: (r.data && r.data[0]) || null };
+      state = { posts: [], reacts: [], rec: (r.data && r.data[0]) || null, members: [] };
       view.innerHTML = '<div id="muralRec">' + recadoHtml() + '</div>' +
         msg('Cadê a sua matilha?', '<p>O mural é só de quem usa a mesma <strong>tag de grupo</strong>. Abra as configurações (engrenagem no topo), digite a tag combinada com os amigos e volte aqui.</p>');
       bind(view);

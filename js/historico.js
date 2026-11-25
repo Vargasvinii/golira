@@ -261,6 +261,30 @@
   // ------------------------------------------------------------------
   // Rota
   // ------------------------------------------------------------------
+  // ------------------------------------------------------------------
+  // Sequência pública (nome, foto e streak que a matilha vê no Mural)
+  // ------------------------------------------------------------------
+  let lastSync = 0;
+  async function streakSet(cur) {
+    const p = G.profile;
+    if (!p || !('streak_days' in p) || !G.session) return;
+    const today = G.hojeISO();
+    if (p.streak_days === cur && p.streak_day === today) return;
+    const r = await G.sb.from('profiles').update({ streak_days: cur, streak_day: today }).eq('id', G.session.user.id);
+    if (!r.error) { p.streak_days = cur; p.streak_day = today; }
+  }
+  G.streakSync = async function () {
+    const p = G.profile;
+    if (!p || !('streak_days' in p)) return;
+    if (Date.now() - lastSync < 5 * 60 * 1000) return;
+    lastSync = Date.now();
+    try {
+      const d = await loadData();
+      if (d.missing || d.error) return;
+      await streakSet(streaks(buildDays(d)).cur);
+    } catch (e) { /* silencioso */ }
+  };
+
   G.routes.historico = async function () {
     const view = $('#view');
     view.innerHTML = '<div class="card-box"><p class="muted">Carregando seu histórico…</p></div>';
@@ -277,5 +301,6 @@
     }
     view.innerHTML = render(data);
     if (G.enter) G.enter();
+    try { await streakSet(streaks(buildDays(data)).cur); lastSync = Date.now(); } catch (e) { /* silencioso */ }
   };
 })();

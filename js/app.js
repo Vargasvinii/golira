@@ -103,6 +103,12 @@
     v.classList.add('route-enter');
     enterTimer = setTimeout(() => v.classList.remove('route-enter'), 1000);
   };
+  // Avatar: foto (data URL) ou a inicial do nome
+  G.avatarHtml = function (src, name, cls) {
+    const c = 'avatar ' + (cls || '');
+    if (src && /^data:image\//.test(src)) return '<span class="' + c + '"><img src="' + src + '" alt=""></span>';
+    return '<span class="' + c + ' ini">' + esc((String(name || '?').trim()[0] || '?').toUpperCase()) + '</span>';
+  };
   G.icon = icon;
   G.waterState = function () { return { total: water.total, goal: profile ? profile.water_goal_ml : 3000 }; };
   G.redrawHoje = function () { drawHoje(); };
@@ -260,6 +266,7 @@
     hojeFirst = true;
     drawHoje();
     // Cartão do treino de hoje (vem do treino.js; falha em silêncio se não houver)
+    if (G.streakSync) G.streakSync();
     if (G.gorilaoLoad) {
       G.gorilaoLoad().then(() => { if (route === 'hoje') drawHoje(); }).catch(() => {});
     }
@@ -434,12 +441,40 @@
       .toUpperCase().replace(/[^A-Z0-9_-]/g, '');
   }
 
+  // as colunas do perfil (schema-v6) existem?
+  function hasAvatarCols() { return !!profile && ('avatar' in profile); }
+
+  // Lê a foto escolhida, recorta o centro em quadrado e reduz pra 256 px (JPEG leve)
+  async function fotoParaAvatar(file) {
+    let bmp;
+    try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+    catch (e) {
+      bmp = await new Promise((ok, no) => {
+        const img = new Image(); const u = URL.createObjectURL(file);
+        img.onload = () => { URL.revokeObjectURL(u); ok(img); }; img.onerror = () => no(new Error('img')); img.src = u;
+      });
+    }
+    const w = bmp.width, h = bmp.height, side = Math.min(w, h);
+    const cv = document.createElement('canvas'); cv.width = cv.height = 256;
+    const cx = cv.getContext('2d');
+    cx.fillStyle = '#111'; cx.fillRect(0, 0, 256, 256);
+    cx.drawImage(bmp, (w - side) / 2, (h - side) / 2, side, side, 0, 0, 256, 256);
+    let q = 0.82, out = cv.toDataURL('image/jpeg', q);
+    while (out.length > 60000 && q > 0.4) { q -= 0.1; out = cv.toDataURL('image/jpeg', q); }
+    return out;
+  }
+
   function openSettings(forced) {
     $('#modalRoot').innerHTML =
       '<div class="modal-overlay"><form class="modal-card" id="settingsForm" novalidate>' +
         '<div class="modal-header"><span class="modal-title">' + (forced ? 'Bem-vindo à matilha' : 'Cadastro e configurações') + '</span>' +
         (forced ? '' : '<button class="modal-close" type="button" id="closeSettings" aria-label="Fechar">✕</button>') + '</div>' +
         (forced ? '<p class="muted">Preencha seus dados para o app calcular seu IMC e sua meta de água.</p>' : '') +
+        (hasAvatarCols() ? '<div class="avatar-pick"><div id="avPrev"></div><div class="av-actions">' +
+          '<button type="button" class="btn-ghost btn-small" id="avPick">Escolher foto</button>' +
+          '<button type="button" class="btn-link" id="avDel">Remover foto</button>' +
+          '<input type="file" accept="image/*" id="avFile" class="hidden"></div></div>' +
+          '<small class="av-note">A foto vira um quadradinho 256 px, aparece no seu perfil pra matilha e fica salva no app. Use a imagem que quiser (selfie, desenho, avatar de IA).</small>' : '') +
         '<label class="field">Seu nome<input name="display_name" maxlength="20" autocomplete="given-name"></label>' +
         '<div class="row">' +
           '<label class="field">Peso (kg)<input name="weight" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex.: 82,5"></label>' +
@@ -448,6 +483,7 @@
         '<label class="field">Objetivo<input name="goal" maxlength="80" placeholder="Ex.: ganhar massa, emagrecer, saúde"></label>' +
         '<label class="field">Meta de água por dia (litros)<input name="water" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex.: 3,0">' +
           '<small id="waterHint"></small></label>' +
+        (hasAvatarCols() ? '<label class="check-line"><input type="checkbox" name="show_profile"><span>Aparecer pra minha matilha <em>(só nome, foto e sequência de dias)</em></span></label>' : '') +
         '<div class="opt-box">' +
           '<label class="check-line"><input type="checkbox" name="smoke_on"><span>Acompanhar cigarros <em>(opcional, só você vê)</em></span></label>' +
           '<label class="field hidden" id="smokeGoalField">Máximo de cigarros por dia<input name="smoke_goal" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 10"></label>' +
@@ -466,6 +502,29 @@
     f.goal.value = profile.goal || '';
     f.water.value = (profile.water_goal_ml / 1000).toFixed(1).replace('.', ',');
     f.tag.value = groupTag;
+
+    // foto de perfil: undefined = não mexeu, null = remover, texto = nova foto
+    let avatarNew;
+    if (hasAvatarCols()) {
+      const prev = () => {
+        const cur = avatarNew === undefined ? profile.avatar : avatarNew;
+        $('#avPrev').innerHTML = G.avatarHtml(cur, f.display_name.value || profile.display_name, 'av-big');
+        $('#avDel').classList.toggle('hidden', !cur);
+      };
+      f.show_profile.checked = profile.show_profile !== false;
+      prev();
+      f.display_name.addEventListener('input', prev);
+      $('#avPick').addEventListener('click', () => $('#avFile').click());
+      $('#avDel').addEventListener('click', () => { avatarNew = null; prev(); });
+      $('#avFile').addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        try { avatarNew = await fotoParaAvatar(file); prev(); }
+        catch (x) { $('#formError').textContent = 'Não consegui abrir essa imagem. Tente outra.'; }
+        e.target.value = '';
+      });
+      f._avatar = () => avatarNew;
+    }
 
     // sugestão de meta de água pelo peso (referência geral: 35 ml por kg)
     const fmtL = (n) => n.toFixed(1).replace('.', ',');
@@ -517,13 +576,19 @@
     const btn = $('#saveBtn');
     btn.disabled = true;
 
-    const up = await sb.from('profiles').update({
+    const payload = {
       display_name: name,
       weight_kg: weight,
       height_cm: height,
       goal: f.goal.value.trim() || null,
       water_goal_ml: Math.round(waterL * 1000),
-    }).eq('id', session.user.id);
+    };
+    if (hasAvatarCols()) {
+      payload.show_profile = f.show_profile.checked;
+      const a = f._avatar ? f._avatar() : undefined;
+      if (a !== undefined) payload.avatar = a;
+    }
+    const up = await sb.from('profiles').update(payload).eq('id', session.user.id);
     if (up.error) {
       btn.disabled = false;
       return (err.textContent = 'Erro ao salvar: ' + up.error.message);
