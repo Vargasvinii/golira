@@ -70,15 +70,27 @@
   }
   G.forcaScore = (f) => clamp(power(f), 0, 1);
 
-  // cor progressiva: vermelho -> laranja -> amarelo -> verde (95% ou mais)
-  const CORES = [[0, [229, 72, 77]], [0.4, [242, 140, 56]], [0.7, [242, 201, 76]], [0.95, [47, 191, 113]]];
+  // cor progressiva: bordô -> laranja -> amarelo -> verde (95% ou mais).
+  // Cada parada tem [topo, base, borda], para o degradê e a borda destacada.
+  const CORES = [
+    [0, [[122, 27, 43], [76, 14, 24], [209, 43, 69]]],
+    [0.4, [[214, 112, 48], [150, 62, 18], [255, 146, 66]]],
+    [0.7, [[236, 200, 80], [186, 138, 28], [255, 218, 96]]],
+    [0.95, [[70, 219, 139], [47, 191, 113], [47, 191, 113]]],
+  ];
   G.forcaCor = function (p) {
     p = clamp(p, 0, 0.95);
     let i = 1;
     while (i < CORES.length - 1 && p > CORES[i][0]) i++;
     const a = CORES[i - 1], b = CORES[i];
     const t = (p - a[0]) / (b[0] - a[0]);
-    return 'rgb(' + a[1].map((v, k) => Math.round(L(v, b[1][k], t))).join(',') + ')';
+    const c = a[1].map((rgb, n) => 'rgb(' + rgb.map((v, k) => Math.round(L(v, b[1][n][k], t))).join(',') + ')');
+    return { topo: c[0], base: c[1], borda: c[2] };
+  };
+  // variáveis CSS usadas na bolinha do Histórico e na barra da Hoje
+  G.forcaVars = function (p) {
+    const c = G.forcaCor(p);
+    return '--c1:' + c.topo + ';--c2:' + c.base + ';--cb:' + c.borda;
   };
 
   function stageOf(p) {
@@ -128,12 +140,11 @@
     const h = G.habitosState ? G.habitosState() : null;
     if (!S.loaded || !(h && h.loaded)) return '';
     const pct = Math.round(G.forcaScore(facts()) * 100);
-    const cor = G.forcaCor(pct / 100);
     const old = document.querySelector('.forca .progress-fill');
     const from = old ? Number(old.dataset.to) || 0 : 0;
     return '<div class="card-box forca" data-to="' + pct + '">' +
       '<div class="power-top"><span>Força do dia</span><strong>' + pct + '%</strong></div>' +
-      '<div class="progress-bar"><div class="progress-fill" data-to="' + pct + '" style="width:' + from + '%;background:' + cor + ';box-shadow:0 0 14px ' + cor + '"></div></div>' +
+      '<div class="progress-bar"><div class="progress-fill forca-fill" data-to="' + pct + '" style="width:' + from + '%;' + G.forcaVars(pct / 100) + '"></div></div>' +
       '<div class="muted">Soma da água, do treino e dos hábitos de hoje.</div></div>';
   };
 

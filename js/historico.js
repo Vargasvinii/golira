@@ -201,11 +201,10 @@
   function dayDot(d) {
     const full = d.logged && d.pct >= 95;
     const trained = d.logged && d.v.trained;
-    const cor = d.logged ? G.forcaCor(d.pct / 100) : '';
     const label = NOMES[d.i] + (d.logged ? ': ' + d.pct + '%' + (trained ? ', treinou' : '') : '');
-    return '<div class="wd' + (d.logged ? ' on' : '') + (d.future ? ' future' : '') + (d.today ? ' today' : '') + '" title="' + label + '" aria-label="' + label + '">' +
+    return '<div class="wd' + (d.logged ? ' on' : '') + (d.logged && d.pct < 55 ? ' low' : '') + (d.future ? ' future' : '') + (d.today ? ' today' : '') + '" title="' + label + '" aria-label="' + label + '">' +
       '<span class="wl">' + LETTERS[d.i] + '</span>' +
-      '<span class="wdot"' + (cor ? ' style="--c:' + cor + '"' : '') + '>' +
+      '<span class="wdot"' + (d.logged ? ' style="' + G.forcaVars(d.pct / 100) + '"' : '') + '>' +
         (full ? ic('check') : trained ? ic('treino') : '') +
         (full && trained ? '<span class="wbadge">' + ic('treino') + '</span>' : '') +
       '</span></div>';

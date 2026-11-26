@@ -160,6 +160,8 @@ svg.ic.fill { fill: currentColor; stroke: none; }
 }
 .progress-fill.done { background: linear-gradient(90deg, #1F9A57, var(--esm)); box-shadow: 0 0 14px rgba(47, 191, 113, 0.6); }
 
+.progress-fill.forca-fill { background: linear-gradient(180deg, var(--c1), var(--c2)); box-shadow: inset 0 0 0 1.5px var(--cb), 0 0 14px color-mix(in srgb, var(--cb) 55%, transparent); }
+
 .water-buttons { display: flex; gap: 10px; }
 .ok-line { display: flex; align-items: center; gap: 8px; color: var(--esm); font-weight: 700; }
 .drop { color: var(--agua); }
@@ -420,15 +422,16 @@ svg.ic.fill { fill: currentColor; stroke: none; }
 .wdot svg { width: 20px; height: 20px; stroke-width: 3; }
 .wd.future .wdot { border-style: dashed; opacity: 0.5; }
 .wdot { position: relative; }
-.wd.on .wdot { background: var(--c); border-color: var(--c); box-shadow: 0 0 12px var(--c); }
-.wbadge { position: absolute; right: -5px; bottom: -5px; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; background: #0b0b0d; border: 1px solid var(--c); color: #fff; }
+.wd.on .wdot { background: linear-gradient(180deg, var(--c1), var(--c2)); border-color: var(--cb); box-shadow: 0 0 14px color-mix(in srgb, var(--cb) 45%, transparent); }
+.wd.on.low .wdot { color: #fff; }
+.wbadge { position: absolute; right: -5px; bottom: -5px; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; background: #0b0b0d; border: 1px solid var(--cb); color: #fff; }
 .wdot .wbadge svg { width: 12px; height: 12px; stroke-width: 2.4; }
 .wd.today .wdot { box-shadow: 0 0 0 3px rgba(236, 211, 181, 0.35); }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11px; color: rgba(233, 233, 233, 0.65); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .lg { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1px solid rgba(255, 255, 255, 0.2); }
 .legend svg { width: 14px; height: 14px; }
-.legend .scale i { width: 44px; height: 8px; border-radius: 8px; background: linear-gradient(90deg, #E5484D, #F28C38, #F2C94C, #2FBF71); }
+.legend .scale i { width: 44px; height: 8px; border-radius: 8px; background: linear-gradient(90deg, #7A1B2B, #D67030, #ECC850, #2FBF71); }
 
 .imc-row { display: flex; align-items: center; gap: 14px; }
 .imc-num { width: 78px; height: 78px; border-radius: 50%; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--agua); box-shadow: 0 0 16px rgba(90, 184, 240, 0.3); }
