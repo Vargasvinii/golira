@@ -2,5 +2,8 @@
   "name": "goliira",
   "version": "0.1.0",
   "private": true,
-  "description": "GOLIRA - habitos saudaveis e treino com IA"
+  "description": "GOLIRA - habitos saudaveis e treino com IA",
+  "dependencies": {
+    "web-push": "3.6.7"
+  }
 }

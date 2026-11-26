@@ -490,6 +490,7 @@
         '</div>' +
         '<label class="field">Tag do grupo<input name="tag" maxlength="30" autocapitalize="characters" placeholder="Ex.: MATILHA-7K2Q">' +
           '<small>Quem tem a mesma tag vê os recados do Mural uns dos outros. Use uma tag difícil de adivinhar, ela funciona como uma senha do grupo. Deixe vazio para ficar sem grupo.</small></label>' +
+        '<div class="opt-box" id="avisosBox"></div>' +
         '<div class="error" id="formError"></div>' +
         '<button class="btn-action" type="submit" id="saveBtn">Salvar</button>' +
         '<button class="btn-ghost" type="button" id="logoutBtn">Sair da conta</button>' +
@@ -549,7 +550,8 @@
     syncSmoke();
 
     if (!forced) $('#closeSettings').addEventListener('click', closeModal);
-    $('#logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); });
+    $('#logoutBtn').addEventListener('click', async () => { if (G.avisosSair) await G.avisosSair(); await sb.auth.signOut(); });
+    if (G.avisosMount) G.avisosMount($('#avisosBox'));
     f.addEventListener('submit', (e) => { e.preventDefault(); saveSettings(f); });
   }
 

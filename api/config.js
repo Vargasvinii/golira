@@ -17,5 +17,5 @@ module.exports = (req, res) => {
       error: 'Faltam as variáveis SUPABASE_URL e SUPABASE_ANON_KEY na Vercel.',
     });
   }
-  return res.status(200).json({ url, anonKey });
+  return res.status(200).json({ url, anonKey, vapidKey: env.VAPID_PUBLIC_KEY || null });
 };
