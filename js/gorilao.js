@@ -51,18 +51,35 @@
     const smokeOn = !!(h && h.cfg && h.cfg.smoke);
     const smokeN = h ? h.smokeCount : 0;
     const smokeGoal = h && h.cfg && h.cfg.goal ? h.cfg.goal : 10;
-    return { w, hour, waterPct, trained, junk, smokeOn, smokeN, smokeGoal, open: S.open, planDay: S.planDay, hasPlan: S.hasPlan };
+    return { w, hour, waterPct, trained, junk, smokeOn, smokeN, smokeGoal, open: S.open, planDay: S.planDay, hasPlan: S.hasPlan,
+      rest: S.hasPlan && !S.planDay };
   }
 
+  // Pesos: água, treino e hábitos ativos. Em dia de descanso (f.rest) o treino
+  // sai da conta, e o resto é redistribuído para o dia ainda poder fechar em 100%.
   function power(f) {
     const t = f.trained ? 1 : (f.open ? 0.3 : 0);
-    const j = f.junk ? 0 : 1;
+    const wt = f.smokeOn ? 0.35 : 0.4;
+    let soma = (f.smokeOn ? 0.45 : 0.5) * f.waterPct + (f.junk ? 0 : 0.1);
+    let total = 1 - wt;
     if (f.smokeOn) {
-      const s = f.smokeN <= f.smokeGoal ? 1 : Math.max(0, 1 - (f.smokeN - f.smokeGoal) / f.smokeGoal);
-      return 0.45 * f.waterPct + 0.35 * t + 0.1 * j + 0.1 * s;
+      soma += 0.1 * (f.smokeN <= f.smokeGoal ? 1 : Math.max(0, 1 - (f.smokeN - f.smokeGoal) / f.smokeGoal));
     }
-    return 0.5 * f.waterPct + 0.4 * t + 0.1 * j;
+    if (!f.rest || f.trained || f.open) { soma += wt * t; total += wt; }
+    return soma / total;
   }
+  G.forcaScore = (f) => clamp(power(f), 0, 1);
+
+  // cor progressiva: vermelho -> laranja -> amarelo -> verde (95% ou mais)
+  const CORES = [[0, [229, 72, 77]], [0.4, [242, 140, 56]], [0.7, [242, 201, 76]], [0.95, [47, 191, 113]]];
+  G.forcaCor = function (p) {
+    p = clamp(p, 0, 0.95);
+    let i = 1;
+    while (i < CORES.length - 1 && p > CORES[i][0]) i++;
+    const a = CORES[i - 1], b = CORES[i];
+    const t = (p - a[0]) / (b[0] - a[0]);
+    return 'rgb(' + a[1].map((v, k) => Math.round(L(v, b[1][k], t))).join(',') + ')';
+  };
 
   function stageOf(p) {
     if (p < 0.2) return 'Seco no deserto';
@@ -110,12 +127,13 @@
   G.gorilaoHtml = function () {
     const h = G.habitosState ? G.habitosState() : null;
     if (!S.loaded || !(h && h.loaded)) return '';
-    const pct = Math.round(clamp(power(facts()), 0, 1) * 100);
+    const pct = Math.round(G.forcaScore(facts()) * 100);
+    const cor = G.forcaCor(pct / 100);
     const old = document.querySelector('.forca .progress-fill');
     const from = old ? Number(old.dataset.to) || 0 : 0;
     return '<div class="card-box forca" data-to="' + pct + '">' +
       '<div class="power-top"><span>Força do dia</span><strong>' + pct + '%</strong></div>' +
-      '<div class="progress-bar"><div class="progress-fill done" data-to="' + pct + '" style="width:' + from + '%"></div></div>' +
+      '<div class="progress-bar"><div class="progress-fill" data-to="' + pct + '" style="width:' + from + '%;background:' + cor + ';box-shadow:0 0 14px ' + cor + '"></div></div>' +
       '<div class="muted">Soma da água, do treino e dos hábitos de hoje.</div></div>';
   };
 

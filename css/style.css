@@ -151,7 +151,7 @@ svg.ic.fill { fill: currentColor; stroke: none; }
 .progress-fill {
   position: relative; height: 100%; width: 0%; border-radius: 12px; overflow: hidden;
   background: linear-gradient(90deg, #3E8FD1, var(--agua)); box-shadow: 0 0 14px rgba(90, 184, 240, 0.55);
-  transition: width 0.9s var(--ease-out);
+  transition: width 0.9s var(--ease-out), background-color 0.9s, box-shadow 0.9s;
 }
 .progress-fill::after {
   content: ""; position: absolute; inset: 0;
@@ -419,14 +419,16 @@ svg.ic.fill { fill: currentColor; stroke: none; }
 .wdot { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; border: 2px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.03); color: #04150C; transition: transform 0.3s var(--spring); }
 .wdot svg { width: 20px; height: 20px; stroke-width: 3; }
 .wd.future .wdot { border-style: dashed; opacity: 0.5; }
-.wd.part .wdot { background: linear-gradient(180deg, #7A1B2B, #4C0E18); border-color: rgba(209, 43, 69, 0.75); box-shadow: 0 0 12px rgba(209, 43, 69, 0.35); }
-.wd.full .wdot { background: linear-gradient(180deg, #46DB8B, var(--esm)); border-color: var(--esm); box-shadow: 0 0 14px rgba(47, 191, 113, 0.5); }
+.wdot { position: relative; }
+.wd.on .wdot { background: var(--c); border-color: var(--c); box-shadow: 0 0 12px var(--c); }
+.wbadge { position: absolute; right: -5px; bottom: -5px; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; background: #0b0b0d; border: 1px solid var(--c); color: #fff; }
+.wdot .wbadge svg { width: 12px; height: 12px; stroke-width: 2.4; }
 .wd.today .wdot { box-shadow: 0 0 0 3px rgba(236, 211, 181, 0.35); }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11px; color: rgba(233, 233, 233, 0.65); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .lg { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1px solid rgba(255, 255, 255, 0.2); }
-.lg.full { background: var(--esm); border-color: var(--esm); }
-.lg.part { background: #7A1B2B; border-color: var(--neon); }
+.legend svg { width: 14px; height: 14px; }
+.legend .scale i { width: 44px; height: 8px; border-radius: 8px; background: linear-gradient(90deg, #E5484D, #F28C38, #F2C94C, #2FBF71); }
 
 .imc-row { display: flex; align-items: center; gap: 14px; }
 .imc-num { width: 78px; height: 78px; border-radius: 50%; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--agua); box-shadow: 0 0 16px rgba(90, 184, 240, 0.3); }

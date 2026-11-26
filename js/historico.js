@@ -32,10 +32,13 @@
     const sinceDay = G.hojeISO(since);
 
     const r = await Promise.all([
-      sb.from('water_logs').select('amount_ml, logged_at').gte('logged_at', sinceISO).limit(2000),
+      sb.from('water_logs').select('amount_ml, logged_at').gte('logged_at', sinceISO).order('logged_at', { ascending: false }).limit(2000),
       sb.from('workout_sessions').select('id, day_title, started_at, finished_at, difficulty').not('finished_at', 'is', null).order('started_at', { ascending: false }).limit(120),
-      sb.from('habit_logs').select('habit, logged_on').gte('logged_on', sinceDay).limit(2000),
+      sb.from('habit_logs').select('habit, logged_on').gte('logged_on', sinceDay).order('logged_on', { ascending: false }).limit(2000),
       sb.from('weight_logs').select('weight_kg, logged_on').order('logged_on', { ascending: true }).limit(400),
+      sb.from('user_habits').select('*').maybeSingle(),
+      sb.from('workout_plans').select('id, is_active'),
+      sb.from('workout_days').select('plan_id, weekday'),
     ]);
     if (r.slice(1, 2).some((x) => isMissing(x.error)) || isMissing(r[3].error)) return { missing: 'v2' };
     const err = r.map((x) => x.error).find((e) => e && !isMissing(e));
@@ -48,7 +51,12 @@
       const it = await sb.from('workout_session_items').select('session_id, name, kind, done, done_load_kg').in('session_id', ids).eq('done', true).limit(3000);
       if (!it.error) items = it.data || [];
     }
+    // dias da semana com treino na ficha ativa (null = sem ficha)
+    const plan = r[5].error ? null : (r[5].data || []).find((p) => p.is_active);
+    const days = plan && !r[6].error ? (r[6].data || []).filter((d) => d.plan_id === plan.id) : [];
     return {
+      smoke: r[4].error ? null : r[4].data,
+      trainDays: days.length ? days.map((d) => d.weekday) : null,
       water: r[0].error ? [] : (r[0].data || []),
       sessions,
       habits: r[2].error ? [] : (r[2].data || []),
@@ -64,13 +72,14 @@
   function buildDays(data) {
     const goal = G.profile.water_goal_ml || 3000;
     const map = {};
-    const get = (k) => (map[k] || (map[k] = { water: 0, trained: false, junk: false }));
+    const get = (k) => (map[k] || (map[k] = { water: 0, trained: false, junk: false, smoke: 0 }));
     data.water.forEach((w) => { get(dayKey(w.logged_at)).water += w.amount_ml; });
     data.sessions.forEach((s) => { get(dayKey(s.finished_at)).trained = true; });
     data.habits.forEach((h) => {
       const d = get(h.logged_on);
       if (h.habit === 'workout') d.trained = true;
       if (h.habit === 'junk') d.junk = true;
+      if (h.habit === 'smoke') d.smoke++;
     });
     Object.values(map).forEach((d) => {
       d.waterOk = d.water >= goal;
@@ -95,7 +104,18 @@
     return { cur, best: Math.max(best, cur) };
   }
 
-  function weekOf(map) {
+  // cor do dia: mesma conta da barra Força do dia
+  function scoreOf(v, weekday, data) {
+    const cfg = data.smoke;
+    return G.forcaScore({
+      waterPct: Math.min(1, v.water / (G.profile.water_goal_ml || 3000)),
+      trained: v.trained, open: false, junk: v.junk,
+      smokeOn: !!(cfg && cfg.smoke_enabled), smokeN: v.smoke, smokeGoal: Number(cfg && cfg.smoke_goal) || 10,
+      rest: !!data.trainDays && data.trainDays.indexOf(weekday) < 0,
+    });
+  }
+
+  function weekOf(map, data) {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     const start = addDays(now, -now.getDay());
@@ -105,11 +125,10 @@
       const d = addDays(start, i);
       const k = G.hojeISO(d);
       const v = map[k];
-      let state = 'none';
-      if (k > todayKey) state = 'future';
-      else if (v && v.complete) state = 'full';
-      else if (v && v.active) state = 'part';
-      out.push({ k, i, state, today: k === todayKey, v });
+      // sem nenhum registro o dia fica cinza (junk "limpo" sozinho não pinta)
+      const logged = k <= todayKey && !!v && (v.water > 0 || v.trained || v.junk || v.smoke > 0);
+      const pct = logged ? Math.round(scoreOf(v, i, data) * 100) : 0;
+      out.push({ k, i, logged, pct, future: k > todayKey, today: k === todayKey, v });
     }
     return out;
   }
@@ -179,10 +198,23 @@
       lab(0, vals[0]) + lab(pts.length - 1, vals[vals.length - 1]) + '</svg>';
   }
 
+  function dayDot(d) {
+    const full = d.logged && d.pct >= 95;
+    const trained = d.logged && d.v.trained;
+    const cor = d.logged ? G.forcaCor(d.pct / 100) : '';
+    const label = NOMES[d.i] + (d.logged ? ': ' + d.pct + '%' + (trained ? ', treinou' : '') : '');
+    return '<div class="wd' + (d.logged ? ' on' : '') + (d.future ? ' future' : '') + (d.today ? ' today' : '') + '" title="' + label + '" aria-label="' + label + '">' +
+      '<span class="wl">' + LETTERS[d.i] + '</span>' +
+      '<span class="wdot"' + (cor ? ' style="--c:' + cor + '"' : '') + '>' +
+        (full ? ic('check') : trained ? ic('treino') : '') +
+        (full && trained ? '<span class="wbadge">' + ic('treino') + '</span>' : '') +
+      '</span></div>';
+  }
+
   function render(data) {
     const map = buildDays(data);
     const st = streaks(map);
-    const week = weekOf(map);
+    const week = weekOf(map, data);
     const evo = loadEvolution(data);
     const now = new Date();
 
@@ -200,11 +232,9 @@
     const agua = week.filter((d) => d.v && d.v.waterOk).length;
     const junk = week.filter((d) => d.v && d.v.junk).length;
     h += '<div class="card-box"><div class="card-header-flex"><span class="card-title-text">Sua semana</span><span class="card-tag">Dom a Sáb</span></div>' +
-      '<div class="week">' + week.map((d) =>
-        '<div class="wd ' + d.state + (d.today ? ' today' : '') + '" title="' + NOMES[d.i] + '">' +
-          '<span class="wl">' + LETTERS[d.i] + '</span>' +
-          '<span class="wdot">' + (d.state === 'full' ? ic('check') : '') + '</span></div>').join('') + '</div>' +
-      '<div class="legend"><span><i class="lg full"></i>Dia completo</span><span><i class="lg part"></i>Dia ativo</span><span><i class="lg none"></i>Sem registro</span></div>' +
+      '<div class="week">' + week.map(dayDot).join('') + '</div>' +
+      '<div class="legend"><span class="scale"><i></i>0% a 100%</span><span>' + ic('check') + 'Dia fechado</span>' +
+      '<span>' + ic('treino') + 'Treinou</span><span><i class="lg"></i>Sem registro</span></div>' +
       '<ul class="recent-list"><li><span>Treinos na semana</span><span class="ex-meta">' + trein + '</span></li>' +
       '<li><span>Dias com meta de água</span><span class="ex-meta">' + agua + ' de 7</span></li>' +
       '<li><span>Dias com junk</span><span class="ex-meta">' + junk + '</span></li></ul></div>';
