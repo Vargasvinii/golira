@@ -191,6 +191,7 @@
     updateBadge();
     renderRoute();
     if (profile.weight_kg == null || profile.height_cm == null) openSettings(true);
+    else if (window.GOLIRA.novidades) window.GOLIRA.novidades();
   }
 
   async function loadProfile() {
